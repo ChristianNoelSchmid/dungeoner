@@ -15,6 +15,8 @@ public partial class SelectionTool : Node2D
 	private Heap<Token> _tokenHeap = new((a, b) => a.Position.Y.CompareTo(b.Position.Y));
 	private Vector2? _mouseDragStart;
 	private Vector2 _previousMousePosition;
+	private AnchorPosition? _anchorHovering;
+	private AnchorPosition? _dragAnchor;
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta) {
@@ -22,42 +24,56 @@ public partial class SelectionTool : Node2D
 
 		// If the left mouse is pressed down...
 		if(Input.IsActionJustPressed("select")) {
-			// If the mouse is currently over a Token...
-			if(_tokenHeap.Peek(out var token)) {
-				// If shift is also being pressed, add/remove the Token
-				// to/from the selected collection
-				if(Input.IsActionPressed("shift")) {
-					if(_selectedTokens.Contains(token)) _selectedTokens.Remove(token);
-					else _selectedTokens.Add(token);
-				// Otherwise, if the token is not part of the collection, clear the collection
-				// and add the single Token to the collection
-				} else if(!_selectedTokens.Contains(token)) {
-					_selectedTokens.Clear();
-					_selectedTokens.Add(token);
-				}
-			// If the mouse is currently not over any Token, clear the selected token collection
-			// and store the mouse position as drag start
-			} else {
-				_selectedTokens.Clear();
+			if(_anchorHovering != null) {
+				GD.Print($"Begin resizing {_anchorHovering}");
+				_dragAnchor = _anchorHovering;
 				_mouseDragStart = mousePosition;
-			}	
+			} else {
+				// If the mouse is currently over a Token...
+				if(_tokenHeap.Peek(out var token)) {
+					// If shift is also being pressed, add/remove the Token
+					// to/from the selected collection
+					if(Input.IsActionPressed("shift")) {
+						if(_selectedTokens.Contains(token)) _selectedTokens.Remove(token);
+						else _selectedTokens.Add(token);
+					// Otherwise, if the token is not part of the collection, clear the collection
+					// and add the single Token to the collection
+					} else if(!_selectedTokens.Contains(token)) {
+						_selectedTokens.Clear();
+						_selectedTokens.Add(token);
+					}
+				// If the mouse is currently not over any Token, clear the selected token collection
+				// and store the mouse position as drag start
+				} else {
+					_selectedTokens.Clear();
+					_mouseDragStart = mousePosition;
+				}	
+			}
 		}
 		// If the left mouse is released, and there is currently a select box being dragged...
 		if(Input.IsActionJustReleased("select") && _mouseDragStart != null) {
-			// Create bounds over the rect and select any Tokens that lie within those bounds
-			Rect2 dragBounds = new Rect2(_mouseDragStart.Value, mousePosition - _mouseDragStart.Value).Abs();
-			foreach(var token in _tokens) {
-				if(dragBounds.Encloses(token.Bounds)) _selectedTokens.Add(token);
+			if(_dragAnchor != null) {
+				_dragAnchor = null;
+			} else {
+				// Create bounds over the rect and select any Tokens that lie within those bounds
+				Rect2 dragBounds = new Rect2(_mouseDragStart.Value, mousePosition - _mouseDragStart.Value).Abs();
+				foreach(var token in _tokens) {
+					if(dragBounds.Encloses(token.Bounds)) _selectedTokens.Add(token);
+				}
+				// Then clear the select box
 			}
-			// Then clear the select box
 			_mouseDragStart = null;
 		}
 
 		// If select is being pressed and there are selected tokens, move the 
 		// selected tokens with the mouse	
 		if(Input.IsActionPressed("select")) {
-			foreach(var token in _selectedTokens) {
-				token.Position -= _previousMousePosition - mousePosition;
+			if(_dragAnchor == null) {
+				foreach(var token in _selectedTokens) {
+					token.Position -= _previousMousePosition - mousePosition;
+				}
+			} else {
+
 			}
 		}
 
@@ -102,10 +118,10 @@ public partial class SelectionTool : Node2D
 	public void OnMouseExitToken(Token token) {
 		_tokenHeap.Remove(token);
 	}
-	public void OnAnchorPressed(int anchorIdx) {
-
+	public void OnAnchorEntered(int anchorIdx) {
+		_anchorHovering = (AnchorPosition)anchorIdx;
 	}
-	public void OnAnchorReleased(int anchorIdx) {
-
+	public void OnAnchorExited(int anchorIdx) {
+		_anchorHovering = null;
 	}
 }

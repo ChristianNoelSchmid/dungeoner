@@ -4,10 +4,10 @@ using Godot;
 public partial class Brackets : Node2D
 {
 	[Signal]
-	public delegate void BracketMouseClickedEventHandler(int position);
+	public delegate void MouseEnterBracketEventHandler(int position);
 
 	[Signal]
-	public delegate void BracketMouseReleasedEventHandler(int position);
+	public delegate void MouseExitBracketEventHandler (int position);
 
 	private TokenSprite[] _anchors;
 	private TokenSprite 
@@ -36,15 +36,6 @@ public partial class Brackets : Node2D
 		_left.MouseEnter += (_) => OnMouseEnterAnchor(AnchorPosition.Left);
 		_topLeft.MouseEnter += (_) => OnMouseEnterAnchor(AnchorPosition.TopLeft);
 
-		_top.MouseEnter += (_) => OnMouseEnterAnchor(AnchorPosition.Top);
-		_topRight.MouseEnter += (_) => OnMouseEnterAnchor(AnchorPosition.TopRight);
-		_right.MouseEnter += (_) => OnMouseEnterAnchor(AnchorPosition.Right);
-		_bottomRight.MouseEnter += (_) => OnMouseEnterAnchor(AnchorPosition.BottomRight);
-		_bottom.MouseEnter += (_) => OnMouseEnterAnchor(AnchorPosition.Bottom);
-		_bottomLeft.MouseEnter += (_) => OnMouseEnterAnchor(AnchorPosition.BottomLeft);
-		_left.MouseEnter += (_) => OnMouseEnterAnchor(AnchorPosition.Left);
-		_topLeft.MouseEnter += (_) => OnMouseEnterAnchor(AnchorPosition.TopLeft);
-
 		_top.MouseExit += (_) => OnMouseExitAnchor(AnchorPosition.Top);
 		_topRight.MouseExit += (_) => OnMouseExitAnchor(AnchorPosition.TopRight);
 		_right.MouseExit += (_) => OnMouseExitAnchor(AnchorPosition.Right);
@@ -56,28 +47,39 @@ public partial class Brackets : Node2D
 	}
 
 	public override void _Process(double delta) {
-		if(_mouseOnAnchor != null) {
-			if(Input.IsActionJustPressed("select")) {
-				EmitSignal(SignalName.BracketMouseClicked, (int)_mouseOnAnchor.Value);
-			} else if(Input.IsActionJustReleased("select")) {
-				EmitSignal(SignalName.BracketMouseClicked, (int)_mouseOnAnchor.Value);
-			}
-		}
+		QueueRedraw();	
+	}
+
+	public override void _Draw() {
+		DrawRect(_top.SpriteBounds, new Color(0, 0, 0));
+		DrawRect(_topRight.SpriteBounds, new Color(0, 0, 0));
+		DrawRect(_right.SpriteBounds, new Color(0, 0, 0));
+		DrawRect(_bottomRight.SpriteBounds, new Color(0, 0, 0));
+		DrawRect(_bottom.SpriteBounds, new Color(0, 0, 0));
+		DrawRect(_bottomLeft.SpriteBounds, new Color(0, 0, 0));
+		DrawRect(_left.SpriteBounds, new Color(0, 0, 0));
+		DrawRect(_topLeft.SpriteBounds, new Color(0, 0, 0));
 	}
 
 	public void SetRect(Rect2 rect) {
 		var center = rect.GetCenter();
 
-		_top.Position = new(center.X, rect.Position.Y);
-		_topRight.Position = new(rect.End.X, rect.Position.Y);
-		_right.Position = new(rect.End.X, center.Y);
-		_bottomRight.Position = new(rect.End.X, rect.End.Y);
-		_bottom.Position = new(center.X, rect.End.Y);
-		_bottomLeft.Position = new(rect.Position.X, rect.End.Y);
-		_left.Position = new(rect.Position.X, center.Y);
-		_topLeft.Position = new(rect.Position.X, rect.Position.Y);
+		_top.GlobalPosition = new(center.X, rect.Position.Y);
+		_topRight.GlobalPosition = new(rect.End.X, rect.Position.Y);
+		_right.GlobalPosition = new(rect.End.X, center.Y);
+		_bottomRight.GlobalPosition = new(rect.End.X, rect.End.Y);
+		_bottom.GlobalPosition = new(center.X, rect.End.Y);
+		_bottomLeft.GlobalPosition = new(rect.Position.X, rect.End.Y);
+		_left.GlobalPosition = new(rect.Position.X, center.Y);
+		_topLeft.GlobalPosition = new(rect.Position.X, rect.Position.Y);
 	}
 
-	private void OnMouseEnterAnchor(AnchorPosition position) => _mouseOnAnchor = position;
-	private void OnMouseExitAnchor(AnchorPosition position) => _mouseOnAnchor = null;
+	private void OnMouseEnterAnchor(AnchorPosition position) {
+		GD.Print($"Entered {position}");
+		EmitSignal(SignalName.MouseEnterBracket, (int)position);
+	}
+	private void OnMouseExitAnchor(AnchorPosition position) {
+		GD.Print($"Exited {position}");
+		EmitSignal(SignalName.MouseExitBracket, (int)position);
+	}
 }

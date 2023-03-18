@@ -11,12 +11,11 @@ public partial class TokenSprite : Sprite2D
 	public Rect2 SpriteBounds => new(
 		GlobalPosition.X + (Offset.X * GlobalScale.X),
 		GlobalPosition.Y + (Offset.Y * GlobalScale.Y),
-		_spriteHalfSize.X * 2,
-		_spriteHalfSize.Y * 2
+		_spriteImg.GetWidth() * GlobalScale.X,
+		_spriteImg.GetHeight() * GlobalScale.Y
 	);
 
 	private Image _spriteImg;
-	private Vector2I _spriteHalfSize;
 	private bool _mouseOver = false;
 
 	public bool InRect(Rect2 bounds) => bounds.Encloses(SpriteBounds);
@@ -24,14 +23,15 @@ public partial class TokenSprite : Sprite2D
 	public override void _Ready()
 	{
 		_spriteImg = Texture.GetImage();
-		_spriteHalfSize = new Vector2I(
-			(int)(_spriteImg.GetWidth() * GlobalScale.X) / 2, 
-			(int)(_spriteImg.GetHeight() * GlobalScale.Y) / 2
-		);
 	}
 
 	public override void _Process(double delta)
 	{
+		if(!Visible) {
+			_mouseOver = false;
+			return;
+		}
+
 		// Get the mouse position relative to the Node
 		var mousePosition = GetGlobalMousePosition();
 
