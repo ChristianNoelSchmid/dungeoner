@@ -1,0 +1,10 @@
+[{
+	"file_path": "./knight_with_armor.png",
+	"key": "humanoid/knight-with-armor",
+	"pivot": [7,25]
+
+},{
+	"file_path": "./goblin.png",
+	"key": "humanoid/goblin",
+	"pivot": [9,26]
+}]

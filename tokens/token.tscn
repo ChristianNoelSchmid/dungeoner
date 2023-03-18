@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://bc3p3wt1vmdvl"]
+
+[ext_resource type="Script" path="res://tokens/Token.cs" id="1_nvhn5"]
+[ext_resource type="Script" path="res://tokens/TokenSprite.cs" id="2_048ss"]
+
+[node name="Token" type="Node2D"]
+script = ExtResource("1_nvhn5")
+
+[node name="TokenSprite" type="Sprite2D" parent="."]
+y_sort_enabled = true
+centered = false
+script = ExtResource("2_048ss")
+
+[connection signal="MouseEnter" from="TokenSprite" to="." method="OnTokenSpriteMouseEnter"]
+[connection signal="MouseExit" from="TokenSprite" to="." method="OnTokenSpriteMouseExit"]

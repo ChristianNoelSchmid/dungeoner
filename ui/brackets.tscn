@@ -1,0 +1,48 @@
+[gd_scene load_steps=4 format=3 uid="uid://kutlfysjtty0"]
+
+[ext_resource type="Texture2D" uid="uid://drihgpe3m83nh" path="res://ui/bracket.png" id="1_3jm1q"]
+[ext_resource type="Script" path="res://ui/Brackets.cs" id="1_e8flw"]
+[ext_resource type="Script" path="res://tokens/TokenSprite.cs" id="3_jxu0a"]
+
+[node name="Brackets" type="Node2D"]
+script = ExtResource("1_e8flw")
+
+[node name="Top" type="Sprite2D" parent="."]
+scale = Vector2(4, 4)
+texture = ExtResource("1_3jm1q")
+script = ExtResource("3_jxu0a")
+
+[node name="TopRight" type="Sprite2D" parent="."]
+scale = Vector2(4, 4)
+texture = ExtResource("1_3jm1q")
+script = ExtResource("3_jxu0a")
+
+[node name="Right" type="Sprite2D" parent="."]
+scale = Vector2(4, 4)
+texture = ExtResource("1_3jm1q")
+script = ExtResource("3_jxu0a")
+
+[node name="BottomRight" type="Sprite2D" parent="."]
+scale = Vector2(4, 4)
+texture = ExtResource("1_3jm1q")
+script = ExtResource("3_jxu0a")
+
+[node name="Bottom" type="Sprite2D" parent="."]
+scale = Vector2(4, 4)
+texture = ExtResource("1_3jm1q")
+script = ExtResource("3_jxu0a")
+
+[node name="BottomLeft" type="Sprite2D" parent="."]
+scale = Vector2(4, 4)
+texture = ExtResource("1_3jm1q")
+script = ExtResource("3_jxu0a")
+
+[node name="Left" type="Sprite2D" parent="."]
+scale = Vector2(4, 4)
+texture = ExtResource("1_3jm1q")
+script = ExtResource("3_jxu0a")
+
+[node name="TopLeft" type="Sprite2D" parent="."]
+scale = Vector2(4, 4)
+texture = ExtResource("1_3jm1q")
+script = ExtResource("3_jxu0a")

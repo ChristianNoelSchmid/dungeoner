@@ -1,0 +1,27 @@
+[gd_scene load_steps=6 format=3 uid="uid://b7frobbif6yvj"]
+
+[ext_resource type="PackedScene" uid="uid://c6si2xv6e6554" path="res://camera/main_camera.tscn" id="1_t46fc"]
+[ext_resource type="PackedScene" uid="uid://cngbxtb6yeuc" path="res://image_importer/image_importer.tscn" id="2_xqtrl"]
+[ext_resource type="PackedScene" uid="uid://c5iprhejfjmj7" path="res://world.tscn" id="3_0r2ri"]
+[ext_resource type="Script" path="res://SelectionTool.cs" id="4_mcqon"]
+[ext_resource type="PackedScene" uid="uid://kutlfysjtty0" path="res://ui/brackets.tscn" id="5_6l0yx"]
+
+[node name="Main" type="Node2D"]
+
+[node name="Camera2D" parent="." instance=ExtResource("1_t46fc")]
+scale = Vector2(0.860892, 1.03784)
+ZoomSpeed = 5.0
+
+[node name="ImageImporter" parent="." node_paths=PackedStringArray("_worldNode", "_selectionTool") instance=ExtResource("2_xqtrl")]
+_worldNode = NodePath("../World")
+_selectionTool = NodePath("../SelectionTool")
+
+[node name="World" parent="." instance=ExtResource("3_0r2ri")]
+y_sort_enabled = true
+
+[node name="SelectionTool" type="Node2D" parent="." node_paths=PackedStringArray("_brackets")]
+script = ExtResource("4_mcqon")
+_brackets = NodePath("Brackets")
+
+[node name="Brackets" parent="SelectionTool" instance=ExtResource("5_6l0yx")]
+visible = false
