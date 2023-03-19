@@ -3,6 +3,9 @@ using Godot;
 
 public partial class Brackets : Node2D
 {
+	[Export]
+	Camera2D _mainCamera;
+
 	[Signal]
 	public delegate void MouseEnterBracketEventHandler(int position);
 
@@ -14,7 +17,7 @@ public partial class Brackets : Node2D
 		_top, _topRight, _right, _bottomRight, 
 		_bottom, _bottomLeft, _left, _topLeft;
 	
-	private AnchorPosition? _mouseOnAnchor;
+	private ResizeDirection? _mouseOnAnchor;
 
 	public override void _Ready()
 	{
@@ -27,38 +30,31 @@ public partial class Brackets : Node2D
 		_left = (TokenSprite)FindChild("Left");
 		_topLeft = (TokenSprite)FindChild("TopLeft");
 
-		_top.MouseEnter += (_) => OnMouseEnterAnchor(AnchorPosition.Top);
-		_topRight.MouseEnter += (_) => OnMouseEnterAnchor(AnchorPosition.TopRight);
-		_right.MouseEnter += (_) => OnMouseEnterAnchor(AnchorPosition.Right);
-		_bottomRight.MouseEnter += (_) => OnMouseEnterAnchor(AnchorPosition.BottomRight);
-		_bottom.MouseEnter += (_) => OnMouseEnterAnchor(AnchorPosition.Bottom);
-		_bottomLeft.MouseEnter += (_) => OnMouseEnterAnchor(AnchorPosition.BottomLeft);
-		_left.MouseEnter += (_) => OnMouseEnterAnchor(AnchorPosition.Left);
-		_topLeft.MouseEnter += (_) => OnMouseEnterAnchor(AnchorPosition.TopLeft);
+		_top.MouseEnter += (_) => OnMouseEnterAnchor(ResizeDirection.Top);
+		_topRight.MouseEnter += (_) => OnMouseEnterAnchor(ResizeDirection.TopRight);
+		_right.MouseEnter += (_) => OnMouseEnterAnchor(ResizeDirection.Right);
+		_bottomRight.MouseEnter += (_) => OnMouseEnterAnchor(ResizeDirection.BottomRight);
+		_bottom.MouseEnter += (_) => OnMouseEnterAnchor(ResizeDirection.Bottom);
+		_bottomLeft.MouseEnter += (_) => OnMouseEnterAnchor(ResizeDirection.BottomLeft);
+		_left.MouseEnter += (_) => OnMouseEnterAnchor(ResizeDirection.Left);
+		_topLeft.MouseEnter += (_) => OnMouseEnterAnchor(ResizeDirection.TopLeft);
 
-		_top.MouseExit += (_) => OnMouseExitAnchor(AnchorPosition.Top);
-		_topRight.MouseExit += (_) => OnMouseExitAnchor(AnchorPosition.TopRight);
-		_right.MouseExit += (_) => OnMouseExitAnchor(AnchorPosition.Right);
-		_bottomRight.MouseExit += (_) => OnMouseExitAnchor(AnchorPosition.BottomRight);
-		_bottom.MouseExit += (_) => OnMouseExitAnchor(AnchorPosition.Bottom);
-		_bottomLeft.MouseExit += (_) => OnMouseExitAnchor(AnchorPosition.BottomLeft);
-		_left.MouseExit += (_) => OnMouseExitAnchor(AnchorPosition.Left);
-		_topLeft.MouseExit += (_) => OnMouseExitAnchor(AnchorPosition.TopLeft);
+		_top.MouseExit += (_) => OnMouseExitAnchor(ResizeDirection.Top);
+		_topRight.MouseExit += (_) => OnMouseExitAnchor(ResizeDirection.TopRight);
+		_right.MouseExit += (_) => OnMouseExitAnchor(ResizeDirection.Right);
+		_bottomRight.MouseExit += (_) => OnMouseExitAnchor(ResizeDirection.BottomRight);
+		_bottom.MouseExit += (_) => OnMouseExitAnchor(ResizeDirection.Bottom);
+		_bottomLeft.MouseExit += (_) => OnMouseExitAnchor(ResizeDirection.BottomLeft);
+		_left.MouseExit += (_) => OnMouseExitAnchor(ResizeDirection.Left);
+		_topLeft.MouseExit += (_) => OnMouseExitAnchor(ResizeDirection.TopLeft);
 	}
 
 	public override void _Process(double delta) {
-		QueueRedraw();	
-	}
+		float scale = Mathf.Clamp((5.5f - _mainCamera.Zoom.X) / 2.0f, 1.0f, 3.0f);
 
-	public override void _Draw() {
-		DrawRect(_top.SpriteBounds, new Color(0, 0, 0));
-		DrawRect(_topRight.SpriteBounds, new Color(0, 0, 0));
-		DrawRect(_right.SpriteBounds, new Color(0, 0, 0));
-		DrawRect(_bottomRight.SpriteBounds, new Color(0, 0, 0));
-		DrawRect(_bottom.SpriteBounds, new Color(0, 0, 0));
-		DrawRect(_bottomLeft.SpriteBounds, new Color(0, 0, 0));
-		DrawRect(_left.SpriteBounds, new Color(0, 0, 0));
-		DrawRect(_topLeft.SpriteBounds, new Color(0, 0, 0));
+		_top.Scale = _topRight.Scale = _right.Scale = 
+		_bottomRight.Scale = _bottom.Scale = _bottomLeft.Scale = 
+		_left.Scale = _topLeft.Scale = new Vector2(scale, scale);
 	}
 
 	public void SetRect(Rect2 rect) {
@@ -74,12 +70,10 @@ public partial class Brackets : Node2D
 		_topLeft.GlobalPosition = new(rect.Position.X, rect.Position.Y);
 	}
 
-	private void OnMouseEnterAnchor(AnchorPosition position) {
-		GD.Print($"Entered {position}");
+	private void OnMouseEnterAnchor(ResizeDirection position) {
 		EmitSignal(SignalName.MouseEnterBracket, (int)position);
 	}
-	private void OnMouseExitAnchor(AnchorPosition position) {
-		GD.Print($"Exited {position}");
+	private void OnMouseExitAnchor(ResizeDirection position) {
 		EmitSignal(SignalName.MouseExitBracket, (int)position);
 	}
 }

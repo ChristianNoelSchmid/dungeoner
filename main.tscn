@@ -1,29 +1,68 @@
-[gd_scene load_steps=5 format=3 uid="uid://b7frobbif6yvj"]
+[gd_scene load_steps=8 format=3 uid="uid://b7frobbif6yvj"]
 
 [ext_resource type="PackedScene" uid="uid://c6si2xv6e6554" path="res://camera/main_camera.tscn" id="1_t46fc"]
-[ext_resource type="PackedScene" uid="uid://cngbxtb6yeuc" path="res://image_importer/image_importer.tscn" id="2_xqtrl"]
+[ext_resource type="Script" path="res://World.cs" id="3_7cp0y"]
+[ext_resource type="Script" path="res://image_importer/TokenImporter.cs" id="3_s8cjx"]
 [ext_resource type="Script" path="res://SelectionTool.cs" id="4_mcqon"]
 [ext_resource type="PackedScene" uid="uid://kutlfysjtty0" path="res://ui/brackets.tscn" id="5_6l0yx"]
+[ext_resource type="Texture2D" uid="uid://b8x51cr5nftrk" path="res://assets/images/goblin.png" id="6_kp82k"]
+[ext_resource type="Texture2D" uid="uid://d38at8f0dyd7i" path="res://assets/images/knight_with_armor.png" id="7_7heem"]
 
 [node name="Main" type="Node2D"]
 
-[node name="Camera2D" parent="." instance=ExtResource("1_t46fc")]
+[node name="Level" type="Node2D" parent="."]
+
+[node name="Camera2D" parent="Level" instance=ExtResource("1_t46fc")]
 scale = Vector2(0.860892, 1.03784)
 ZoomSpeed = 5.0
 
-[node name="ImageImporter" parent="." node_paths=PackedStringArray("_worldNode", "_selectionTool") instance=ExtResource("2_xqtrl")]
-_worldNode = NodePath("../World")
+[node name="TokenImporter" type="Node2D" parent="Level"]
+script = ExtResource("3_s8cjx")
+
+[node name="World" type="Node2D" parent="Level" node_paths=PackedStringArray("_tokenImporter", "_selectionTool")]
+y_sort_enabled = true
+script = ExtResource("3_7cp0y")
+_tokenImporter = NodePath("../TokenImporter")
 _selectionTool = NodePath("../SelectionTool")
 
-[node name="World" type="Node2D" parent="."]
-
-[node name="SelectionTool" type="Node2D" parent="." node_paths=PackedStringArray("_brackets")]
-scale = Vector2(0.996882, 1.01193)
+[node name="SelectionTool" type="Node2D" parent="Level" node_paths=PackedStringArray("_brackets")]
 script = ExtResource("4_mcqon")
 _brackets = NodePath("Brackets")
 
-[node name="Brackets" parent="SelectionTool" instance=ExtResource("5_6l0yx")]
+[node name="Brackets" parent="Level/SelectionTool" node_paths=PackedStringArray("_mainCamera") instance=ExtResource("5_6l0yx")]
 visible = false
+_mainCamera = NodePath("../../Camera2D")
 
-[connection signal="MouseEnterBracket" from="SelectionTool/Brackets" to="SelectionTool" method="OnAnchorEntered"]
-[connection signal="MouseExitBracket" from="SelectionTool/Brackets" to="SelectionTool" method="OnAnchorExited"]
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 20.0
+offset_bottom = 32.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(1.0003, 1.00722)
+size_flags_horizontal = 3
+alignment = 2
+
+[node name="ItemList" type="ItemList" parent="CanvasLayer/HBoxContainer"]
+clip_contents = false
+custom_minimum_size = Vector2(300, 0)
+layout_direction = 3
+layout_mode = 2
+size_flags_vertical = 0
+auto_height = true
+item_count = 2
+fixed_column_width = 300
+item_0/text = "This is a test!     "
+item_0/icon = ExtResource("6_kp82k")
+item_1/text = "This is the second item!     "
+item_1/icon = ExtResource("7_7heem")
+
+[node name="VScrollBar" type="VScrollBar" parent="CanvasLayer/HBoxContainer"]
+layout_mode = 2
+
+[connection signal="MouseEnterBracket" from="Level/SelectionTool/Brackets" to="Level/SelectionTool" method="OnAnchorEntered"]
+[connection signal="MouseExitBracket" from="Level/SelectionTool/Brackets" to="Level/SelectionTool" method="OnAnchorExited"]

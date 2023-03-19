@@ -15,19 +15,21 @@ public partial class SelectionTool : Node2D
 	private Heap<Token> _tokenHeap = new((a, b) => a.Position.Y.CompareTo(b.Position.Y));
 	private Vector2? _mouseDragStart;
 	private Vector2 _previousMousePosition;
-	private AnchorPosition? _anchorHovering;
-	private AnchorPosition? _dragAnchor;
+	private ResizeDirection? _mouseOverBracket;
+	private ResizeDirection? _resizeDirection;
+	private TokenResizer _resizer;
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta) {
 		var mousePosition = GetGlobalMousePosition();
 
 		// If the left mouse is pressed down...
 		if(Input.IsActionJustPressed("select")) {
-			if(_anchorHovering != null) {
-				GD.Print($"Begin resizing {_anchorHovering}");
-				_dragAnchor = _anchorHovering;
+			// If there's a resize bracket the mouse is currently hovering over,
+			// begin resizing
+			if(_mouseOverBracket != null) {
+				_resizeDirection = _mouseOverBracket;
 				_mouseDragStart = mousePosition;
+				_resizer = new(_selectedTokens, _selectedTokens.Select(t => t.Bounds).OuterBounds(), _resizeDirection.Value);
 			} else {
 				// If the mouse is currently over a Token...
 				if(_tokenHeap.Peek(out var token)) {
@@ -52,8 +54,9 @@ public partial class SelectionTool : Node2D
 		}
 		// If the left mouse is released, and there is currently a select box being dragged...
 		if(Input.IsActionJustReleased("select") && _mouseDragStart != null) {
-			if(_dragAnchor != null) {
-				_dragAnchor = null;
+			if(_resizeDirection != null) {
+				_resizeDirection = null;
+				_resizer = null;
 			} else {
 				// Create bounds over the rect and select any Tokens that lie within those bounds
 				Rect2 dragBounds = new Rect2(_mouseDragStart.Value, mousePosition - _mouseDragStart.Value).Abs();
@@ -65,26 +68,45 @@ public partial class SelectionTool : Node2D
 			_mouseDragStart = null;
 		}
 
-		// If select is being pressed and there are selected tokens, move the 
-		// selected tokens with the mouse	
+		// If select is being pressed
 		if(Input.IsActionPressed("select")) {
-			if(_dragAnchor == null) {
+			// Determine if there is a resize bracket being pulled.
+			// If so, update the resizer
+			if(_resizeDirection != null) {
+				Rect2 bounds = _selectedTokens.Select(t => t.Bounds).OuterBounds();
+				Rect2 newRect = _resizeDirection switch {
+					ResizeDirection.Top => new(bounds.Position.X, mousePosition.Y, bounds.Size.X, bounds.End.Y - mousePosition.Y),
+					ResizeDirection.TopRight => new(bounds.Position.X, mousePosition.Y, mousePosition.X - bounds.Position.X, bounds.End.Y - mousePosition.Y),
+					ResizeDirection.Right => new(bounds.Position.X, bounds.Position.Y, mousePosition.X - bounds.Position.X, bounds.Size.Y),
+					ResizeDirection.BottomRight => new(bounds.Position.X, bounds.Position.Y, mousePosition.X - bounds.Position.X, mousePosition.Y - bounds.Position.Y),
+					ResizeDirection.Bottom => new(bounds.Position.X, bounds.Position.Y, bounds.Size.X, mousePosition.Y - bounds.Position.Y),
+					ResizeDirection.BottomLeft => new(mousePosition.X, bounds.Position.Y, bounds.End.X - mousePosition.X, mousePosition.Y - bounds.Position.Y),
+					ResizeDirection.Left => new(mousePosition.X, bounds.Position.Y, bounds.End.X - mousePosition.X, bounds.Size.Y),
+					_ => new(mousePosition.X, mousePosition.Y, bounds.End.X - mousePosition.X, bounds.End.Y - mousePosition.Y)
+				};
+				_resizer.Resize(newRect, Input.IsActionPressed("shift"));
+			// Otherwise, move all selected tokens based on delta mouse movement
+			} else {
 				foreach(var token in _selectedTokens) {
 					token.Position -= _previousMousePosition - mousePosition;
 				}
-			} else {
-
 			}
 		}
 
-		// If there are selected tokens, set up the brackets to box around them
-		// Otherwise, make them invisible
+		// If there are selected tokens, update the resize brackets to surround them
 		if(_selectedTokens.Count != 0) {
-			_brackets.Visible = true;
+			// Show the brackets if they're currently invisible
+			if(!_brackets.IsProcessing()) {
+				_brackets.Visible = true;
+				_brackets.SetProcess(true);
+			}
+
 			var bound = _selectedTokens.Select(t => t.Bounds).OuterBounds();
 			_brackets.SetRect(bound);
+		// Otherwise, make them 
 		} else {
 			_brackets.Visible = false;
+			_brackets.SetProcess(false);
 		}
 
 		_previousMousePosition = mousePosition;
@@ -112,16 +134,8 @@ public partial class SelectionTool : Node2D
 		token.MouseExit += OnMouseExitToken;
 	}
 	public void RemoveToken(Token token) => _tokens.Remove(token);
-	public void OnMouseEnterToken(Token token) {
-		_tokenHeap.Push(token);
-	}
-	public void OnMouseExitToken(Token token) {
-		_tokenHeap.Remove(token);
-	}
-	public void OnAnchorEntered(int anchorIdx) {
-		_anchorHovering = (AnchorPosition)anchorIdx;
-	}
-	public void OnAnchorExited(int anchorIdx) {
-		_anchorHovering = null;
-	}
+	public void OnMouseEnterToken(Token token) => _tokenHeap.Push(token);
+	public void OnMouseExitToken(Token token) =>_tokenHeap.Remove(token);
+	public void OnAnchorEntered(int anchorIdx) => _mouseOverBracket = (ResizeDirection)anchorIdx;
+	public void OnAnchorExited(int anchorIdx) => _mouseOverBracket = null;
 }

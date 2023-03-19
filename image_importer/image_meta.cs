@@ -6,6 +6,6 @@ namespace Dungeoner;
 
 public record ImageMeta (
     [property:JsonPropertyName("file_path")] string FilePath,
-    [property:JsonPropertyName("key")]string Key,
+    [property:JsonPropertyName("key")] string Key,
     [property:JsonPropertyName("pivot")] IReadOnlyList<int> Pivot
 );

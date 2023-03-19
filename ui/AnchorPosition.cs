@@ -1,6 +1,6 @@
 using Godot;
 namespace Dungeoner;
 
-public enum AnchorPosition {
+public enum ResizeDirection {
     Top, TopRight, Right, BottomRight, Bottom, BottomLeft, Left, TopLeft
 }
