@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d38at8f0dyd7i"
-path="res://.godot/imported/knight_with_armor.png-c348990943dd18c2ca733d01c4d469af.ctex"
+path="res://.godot/imported/knight_with_armor.png-03a533fc58c3bc23e900a8d8a5e4f16b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/knight_with_armor.png"
-dest_files=["res://.godot/imported/knight_with_armor.png-c348990943dd18c2ca733d01c4d469af.ctex"]
+source_file="res://assets/tokens/knight_with_armor.png"
+dest_files=["res://.godot/imported/knight_with_armor.png-03a533fc58c3bc23e900a8d8a5e4f16b.ctex"]
 
 [params]
 

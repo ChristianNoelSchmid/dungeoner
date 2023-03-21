@@ -1,3 +1,4 @@
+using Dungeoner.Ui;
 using Godot;
 using System;
 
@@ -9,6 +10,8 @@ public partial class CameraMovement : Camera2D
 	public float Accel { get; set; } = 10;
 	[Export]
 	public float ZoomSpeed { get; set; } = 1;
+	[Export]
+	private UiCanvas _uiCanvas;
 
 	private Vector2 _targetPosition;
 
@@ -21,6 +24,8 @@ public partial class CameraMovement : Camera2D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+		if(_uiCanvas.UiFocused) return;
+
 		float deltaf = (float)delta;
 		Vector2 axes = new(Input.GetAxis("left", "right"), Input.GetAxis("up", "down"));
 

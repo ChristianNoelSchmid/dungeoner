@@ -21,24 +21,25 @@ public partial class TokenImporter : Node2D
 
 	public IEnumerable<ImageMeta> GetAllMatchingMetas(string glob) => _imgCollection.GetItems(glob);
 
-    public Token GetToken(ImageMeta imgMeta) {
-        var img = new Image();
+	public ImageTexture GetTexture(ImageMeta imgMeta) {
+		var img = new Image();
         img.Load(imgMeta.FilePath);
-        var rand = new Random();
 
-		var tex = ImageTexture.CreateFromImage(img);
+		return ImageTexture.CreateFromImage(img);
+	}
+
+    public Token GetToken(ImageMeta imgMeta) {
+		var tex = GetTexture(imgMeta);
+
 		var token = (Token)tokenScene.Instantiate();
 		var sprite = token.GetChild<Sprite2D>(0);
 		sprite.Texture = tex;
 		sprite.Offset = new(-imgMeta.Pivot[0], -imgMeta.Pivot[1]);
 
-		float randAngle = (float)(rand.NextDouble() * 2.0 * Math.PI);
-		token.Position = new Vector2(Mathf.Cos(randAngle) * rand.Next(0, 200), Mathf.Sin(randAngle) * rand.Next(0, 200));
-
 		return token;
 	}
 	private void LoadAllTokens() {
-        var imgMetas = GetImageMetas("./assets/images");
+        var imgMetas = GetImageMetas("./assets/tokens");
         foreach ((string fileName, var imgMeta) in imgMetas) {
             if (File.Exists(imgMeta.FilePath)) {
 				if(_imgCollection.Insert(imgMeta.Key, imgMeta)) {

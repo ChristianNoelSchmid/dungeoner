@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b8x51cr5nftrk"
-path="res://.godot/imported/goblin.png-5eeef0a90c870e717272df541016b224.ctex"
+uid="uid://eqcewrl6bem0"
+path="res://.godot/imported/red_stone.png-f026fc3ff806a4fa075cd041d9327355.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/goblin.png"
-dest_files=["res://.godot/imported/goblin.png-5eeef0a90c870e717272df541016b224.ctex"]
+source_file="res://assets/tiles/red_stone.png"
+dest_files=["res://.godot/imported/red_stone.png-f026fc3ff806a4fa075cd041d9327355.ctex"]
 
 [params]
 

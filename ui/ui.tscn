@@ -1,0 +1,50 @@
+[gd_scene load_steps=4 format=3 uid="uid://bfxa2blbu7j0b"]
+
+[ext_resource type="Script" path="res://ui/UiCanvas.cs" id="1_c4btj"]
+[ext_resource type="Script" path="res://ui/SearchBar.cs" id="2_w356e"]
+[ext_resource type="Script" path="res://ui/TokenList.cs" id="5_7t8vx"]
+
+[node name="UI" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_c4btj")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="HBoxContainer/VBoxContainer" node_paths=PackedStringArray("_tokenList")]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+placeholder_text = "Search..."
+script = ExtResource("2_w356e")
+_tokenList = NodePath("../TokenList")
+
+[node name="TokenList" type="ItemList" parent="HBoxContainer/VBoxContainer"]
+clip_contents = false
+custom_minimum_size = Vector2(300, 0)
+layout_direction = 3
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 1
+select_mode = 1
+max_columns = 3
+same_column_width = true
+icon_mode = 0
+fixed_icon_size = Vector2i(64, 64)
+script = ExtResource("5_7t8vx")
+
+[connection signal="focus_entered" from="." to="." method="OnFocusEntered"]
+[connection signal="focus_exited" from="." to="." method="OnFocusExited"]
+[connection signal="mouse_entered" from="HBoxContainer/VBoxContainer/LineEdit" to="HBoxContainer/VBoxContainer/LineEdit" method="OnMouseEnter"]
+[connection signal="mouse_exited" from="HBoxContainer/VBoxContainer/LineEdit" to="HBoxContainer/VBoxContainer/LineEdit" method="OnMouseExit"]
+[connection signal="text_changed" from="HBoxContainer/VBoxContainer/LineEdit" to="HBoxContainer/VBoxContainer/LineEdit" method="OnTextChange"]
+[connection signal="mouse_entered" from="HBoxContainer/VBoxContainer/TokenList" to="HBoxContainer/VBoxContainer/TokenList" method="OnMouseEnter"]
+[connection signal="mouse_exited" from="HBoxContainer/VBoxContainer/TokenList" to="HBoxContainer/VBoxContainer/TokenList" method="OnMouseExit"]
