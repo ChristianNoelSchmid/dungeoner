@@ -1,3 +1,5 @@
+using Dungeoner.Importers;
+using Dungeoner.Maps;
 using Dungeoner.TokenManipulation;
 using Godot;
 using System.Collections.Generic;
@@ -5,18 +7,17 @@ using System.Linq;
 
 namespace Dungeoner;
 
-public partial class TokenList : ItemList
-{
+public partial class TokenList : UiList {
 	private  TokenImporter _importer;
-	private World _world;
+	private TokenMap _world;
 	private SelectionTool _selectionTool;
 	private bool _mouseOver = false;
 	private bool _draggingOffList = false;
-	List<ImageMeta> _listImgMetas = new();
+	List<TokenMeta> _listImgMetas = new();
 
 	public override void _Ready() {
 		_importer = (TokenImporter)GetNode("/root/Main/TokenImporter");
-		_world = (World)GetNode("/root/Main/World");
+		_world = (TokenMap)GetNode("/root/Main/World");
 		_selectionTool = (SelectionTool)GetNode("/root/Main/SelectionTool");
 	}
 
@@ -30,9 +31,9 @@ public partial class TokenList : ItemList
 		if(Input.IsActionJustReleased("select")) _draggingOffList = false;
 	}
 
-	public void QueryList(params string[] globs) {
+	public override void QueryList(params string[] globs) {
 		Clear();
-		List<ImageMeta> metas = new();
+		List<TokenMeta> metas = new();
 		foreach(var glob in globs) {
 			metas.AddRange(_importer.GetAllMatchingMetas(glob));
 		}
@@ -50,7 +51,7 @@ public partial class TokenList : ItemList
 			var tokens = new List<Token>();
 			foreach(int idx in GetSelectedItems()) {
 				var token = _importer.GetToken(_listImgMetas[idx]);
-				token.Position = _world.GetGlobalMousePosition();
+				token.GlobalPosition = _world.GetGlobalMousePosition();
 				_world.AddToken(token);
 				tokens.Add(token);
 			}

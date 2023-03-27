@@ -1,0 +1,10 @@
+[{
+	"filePath": "./blocks.png",
+	"indices": [{
+		"key": "simple/cobblestone",
+		"rect": [0, 0, 27, 27]
+	}, {
+		"key": "simple/redstone",
+		"rect": [27, 0, 27, 27]
+	}]
+}]

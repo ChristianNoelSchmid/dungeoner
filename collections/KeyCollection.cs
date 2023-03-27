@@ -88,8 +88,9 @@ public class KeyCollection<T> : IComparable<KeyCollection<T>> {
         }
     }
 
-    public int CompareTo(KeyCollection<T> other) => _key.CompareTo(other._key);
 
-    public override bool Equals(object obj) => obj is KeyCollection<T> col && col._key == _key;
+    public override bool Equals(object? obj) => obj is not null && obj is KeyCollection<T> col && col._key == _key;
     public override int GetHashCode() => _key.GetHashCode();
+
+    public int CompareTo(KeyCollection<T>? other) => _key.CompareTo(other?._key);
 }

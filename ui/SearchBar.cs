@@ -6,12 +6,12 @@ namespace Dungeoner.Ui;
 public partial class SearchBar : LineEdit
 {
 	[Export]
-	private TokenList _tokenList;
+	private UiList _list;
 
 	private bool _mouseOver = false;
 
 	public void OnTextChange(string text) {
-		_tokenList.QueryList($"**/*{Text}*", $"*{Text}*/**");
+		_list.QueryList($"**/*{Text}*", $"*{Text}*/**");
 	}
 
 	public override void _Process(double delta) {

@@ -43,7 +43,7 @@ public partial class TokenSprite : Sprite2D
 				(int)((mousePosition.Y - GlobalPosition.Y) / GlobalScale.Y - Offset.Y)
 			);
 
-			pixelPos = pixelPos.Clamp(Vector2I.Zero, new (_spriteImg.GetWidth() , _spriteImg.GetHeight()));
+			pixelPos = pixelPos.Clamp(Vector2I.Zero, new (_spriteImg.GetWidth() - 1, _spriteImg.GetHeight() - 1));
 
 			if(_spriteImg.GetPixelv(pixelPos).A > 0.0) 
 			{

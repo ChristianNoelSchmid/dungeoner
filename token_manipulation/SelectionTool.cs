@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dungeoner.Collections;
+using Dungeoner.Maps;
 using Dungeoner.Ui;
 using Godot;
 
@@ -10,7 +11,7 @@ namespace Dungeoner.TokenManipulation;
 public partial class SelectionTool : Node2D
 {	
 	[Export]
-	private World _world;
+	private TokenMap _world;
 	[Export]
 	private UiCanvas _uiCanvas;
 	[Export]
