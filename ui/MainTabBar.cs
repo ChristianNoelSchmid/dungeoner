@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class TabBar : Godot.TabBar {
+public partial class MainTabBar : Godot.TabBar {
 	[Export]
 	private Control TokenMenu;
 	[Export]

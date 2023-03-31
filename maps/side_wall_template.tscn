@@ -6,22 +6,23 @@
 
 [node name="WallSide" type="Node2D"]
 script = ExtResource("1_2vkbm")
+metadata/_edit_horizontal_guides_ = []
 
 [node name="RightShadow" type="Sprite2D" parent="."]
-position = Vector2(5, -27)
+position = Vector2(-6, -1.81899e-12)
 rotation = 1.5708
 texture = ExtResource("2_r2vdb")
 centered = false
 
 [node name="LeftShadow" type="Sprite2D" parent="."]
-position = Vector2(-5, 1.74846e-07)
+position = Vector2(-20, 27)
 rotation = 4.71239
 texture = ExtResource("2_r2vdb")
 centered = false
 
 [node name="Drywall" type="Sprite2D" parent="."]
 modulate = Color(0.211765, 0.211765, 0.211765, 1)
-position = Vector2(-1, -27)
-scale = Vector2(2, 27)
+position = Vector2(-15, 0)
+scale = Vector2(4, 27)
 texture = ExtResource("3_b0ach")
 centered = false

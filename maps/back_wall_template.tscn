@@ -8,41 +8,52 @@
 [node name="WallBack" type="Node2D"]
 script = ExtResource("1_86t1f")
 
+[node name="Border" type="Sprite2D" parent="."]
+modulate = Color(0.211765, 0.211765, 0.211765, 1)
+position = Vector2(-14, -21)
+scale = Vector2(29, 21)
+texture = ExtResource("3_ddcis")
+centered = false
+
 [node name="BackPanel" type="Sprite2D" parent="."]
-position = Vector2(13, -26)
+position = Vector2(0, -20)
 texture = ExtResource("2_7cew0")
 centered = false
-offset = Vector2(-13, -20)
+offset = Vector2(-13, 0)
 
 [node name="LeftDrywall" type="Sprite2D" parent="."]
 modulate = Color(0.211765, 0.211765, 0.211765, 1)
-position = Vector2(-2, -48)
+position = Vector2(-14, -2.91054e-11)
+rotation = 0.00167441
 scale = Vector2(2, 22)
 texture = ExtResource("3_ddcis")
 centered = false
+offset = Vector2(0, -1)
 
 [node name="RightDrywall" type="Sprite2D" parent="."]
-visible = false
 modulate = Color(0.211765, 0.211765, 0.211765, 1)
-position = Vector2(47, -22)
+position = Vector2(13, 0)
 scale = Vector2(2, 22)
 texture = ExtResource("3_ddcis")
 centered = false
+offset = Vector2(0, -1)
 
 [node name="TopDrywall" type="Sprite2D" parent="."]
 modulate = Color(0.211765, 0.211765, 0.211765, 1)
-position = Vector2(0, -48)
+position = Vector2(-13, -22)
 scale = Vector2(27, 2)
 texture = ExtResource("3_ddcis")
 centered = false
 
-[node name="WallShadow" type="Sprite2D" parent="."]
-position = Vector2(0, -30)
+[node name="Shadow" type="Node2D" parent="."]
+
+[node name="WallShadow" type="Sprite2D" parent="Shadow"]
+position = Vector2(-13, -4)
 texture = ExtResource("4_f68hn")
 centered = false
 
-[node name="TileShadow" type="Sprite2D" parent="."]
-position = Vector2(0, -26)
+[node name="TileShadow" type="Sprite2D" parent="Shadow"]
+position = Vector2(-13, 0)
 texture = ExtResource("4_f68hn")
 centered = false
 flip_v = true

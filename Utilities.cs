@@ -33,11 +33,4 @@ public static class Utilities {
 		Mathf.RoundToInt(position.X / Constants.GRID_SIZE),
 		Mathf.RoundToInt(position.Y / Constants.GRID_SIZE)
 	);
-
-	public static IEnumerable<(Vector2I, Vector2I)> GetEdgeNeighbors(Vector2I vector1, Vector2I vector2) {
-        if(vector1.DirectionTo(vector2) == null) throw new ArgumentException("Vertices cannot be more than 1 space apart", nameof(vector2));
-		return vector1.GetNeighbors().Select(n => (vector1, n))
-			.Concat(vector2.GetNeighbors().Select(n => (vector2, n)))
-			.Distinct().Where(pair => pair != (vector1, vector2) && pair != (vector2, vector1));
-    }
 }

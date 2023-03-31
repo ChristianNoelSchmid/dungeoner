@@ -16,7 +16,7 @@ public partial class TilePainter : Node2D
 	[Export]
 	TokenMap _world = default!;
 	[Export]
-    Maps.TileMap _tileGenerator = default!;
+    Maps.TileMap _tileMap = default!;
 
 	private Vector2 _halfShadowSize;
 	private Vector2 _halfGridSize;
@@ -25,12 +25,12 @@ public partial class TilePainter : Node2D
 
 	private Node2D _floorNode = new();
 
-	private bool _activated = false;
+	private bool _activated = true;
 	public bool Activated { 
 		get => _activated;
 		set {
 			_activated = value;
-			_cursorSprite.SetProcess(value);
+			_cursorSprite.Visible = value;
 		}
 	}
 
@@ -50,7 +50,7 @@ public partial class TilePainter : Node2D
 		}
 		var mouseGridPosition = GetGlobalMousePosition().ToGridPosition();
 		if(Input.IsActionPressed("select") && !_ui.UiFocused && _selectedTile != null) {
-			_tileGenerator[mouseGridPosition] = _selectedTile;
+			_tileMap[mouseGridPosition] = _selectedTile;
 		}
 
 		_cursorSprite.Position = mouseGridPosition * Constants.GRID_SIZE;
