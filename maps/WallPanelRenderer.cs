@@ -6,6 +6,8 @@ using Godot;
 namespace Dungeoner.Maps;
 
 public abstract partial class WallPanelRenderer : Node2D {
+    public abstract void UpdateWallMeta(WallMeta meta, Vector2I gridPosition);
+
     /// <summary>
     /// Updates the WallPanelRenderer based on the adjacent neighbor edges
     /// </summary>

@@ -1,10 +1,10 @@
 [{
 	"file_path": "./knight_with_armor.png",
 	"key": "humanoid/knight-with-armor",
-	"pivot": [7,27]
+	"pivot": [7,17]
 
 },{
 	"file_path": "./goblin.png",
 	"key": "humanoid/goblin",
-	"pivot": [9,27]
+	"pivot": [9,17]
 }]

@@ -11,89 +11,94 @@ namespace Dungeoner.TokenManipulation;
 public partial class SelectionTool : Node2D
 {	
 	[Export]
-	private TokenMap _world;
+	private TokenMap _world = default!;
 	[Export]
-	private UiCanvas _uiCanvas;
+	private UiCanvas _uiCanvas = default!;
 	[Export]
-	private DraggingTool _draggingTool;
+	private DraggingTool _draggingTool = default!;
 	[Export]
-	private ResizingTool _resizingTool;
+	private ResizingTool _resizingTool = default!;
 
 	private HashSet<Token> _tokens = new();
 	private HashSet<Token> _selectedTokens = new();
 	public IEnumerable<Token> SelectedTokens => _selectedTokens;
-	private Heap<Token> _tokenHeap = new((a, b) => a.Position.Y.CompareTo(b.Position.Y));
+
+    public bool Activated { get; set; } = true;
+
+    private Heap<Token> _tokenHeap = new((a, b) => a.Position.Y.CompareTo(b.Position.Y));
 	private Vector2? _mouseDragStart;
 	private ResizeDirection? _resizeDirection;
 
 	public override void _Process(double delta) {
-		var mousePosition = GetGlobalMousePosition();
+		if(Activated) {
+			var mousePosition = GetGlobalMousePosition();
 
-		// If the left mouse is pressed down...
-		if(Input.IsActionJustPressed("select")) {
-			if(_uiCanvas.UiFocused) {
-				_selectedTokens.Clear();
-				return;
-			} 
+			// If the left mouse is pressed down...
+			if(Input.IsActionJustPressed("select")) {
+				if(_uiCanvas.UiFocused) {
+					_selectedTokens.Clear();
+					return;
+				} 
 
-			// If there's a resize bracket the mouse is currently hovering over,
-			// begin resizing
-			if(_resizeDirection != null) {
-				_mouseDragStart = mousePosition;
-				_resizingTool.StartResizing(
-					_selectedTokens, 
-					_selectedTokens.Select(t => t.Bounds).OuterBounds(), 
-					_resizeDirection.Value
-				);
-			} else {
-				// If the mouse is currently over a Token...
-				if(_tokenHeap.Peek(out var token)) {
-					// If shift is also being pressed, add/remove the Token
-					// to/from the selected collection
-					if(Input.IsActionPressed("shift")) {
-						if(_selectedTokens.Contains(token)) _selectedTokens.Remove(token);
-						else _selectedTokens.Add(token);
-					// Otherwise, if the token is not part of the collection, clear the collection
-					// and add the single Token to the collection
-					} else if(!_selectedTokens.Contains(token)) {
-						_selectedTokens.Clear();
-						_selectedTokens.Add(token);
-					}
-
-					// Activate the DraggingTool, to begin dragging the selected sprites
-					_draggingTool.IsDragging = true;
-
-				// If the mouse is currently not over any Token, clear the selected token collection
-				// and store the mouse position as drag start
-				} else {
-					if(!Input.IsActionPressed("shift")) _selectedTokens.Clear();
+				// If there's a resize bracket the mouse is currently hovering over,
+				// begin resizing
+				if(_resizeDirection != null) {
 					_mouseDragStart = mousePosition;
-				}	
-			}
-		}
-		// If the left mouse is released, and there is currently a select box being dragged...
-		if(Input.IsActionJustReleased("select")) {
-			_draggingTool.IsDragging = false;
-			_resizingTool.StopResizing();
+					_resizingTool.StartResizing(
+						_selectedTokens, 
+						_selectedTokens.Select(t => t.Bounds).OuterBounds(), 
+						_resizeDirection.Value
+					);
+				} else {
+					// If the mouse is currently over a Token...
+					if(_tokenHeap.Peek(out var token)) {
+						// If shift is also being pressed, add/remove the Token
+						// to/from the selected collection
+						if(Input.IsActionPressed("shift")) {
+							if(_selectedTokens.Contains(token)) _selectedTokens.Remove(token);
+							else _selectedTokens.Add(token);
+						// Otherwise, if the token is not part of the collection, clear the collection
+						// and add the single Token to the collection
+						} else if(!_selectedTokens.Contains(token)) {
+							_selectedTokens.Clear();
+							_selectedTokens.Add(token);
+						}
 
-			if(_mouseDragStart != null) {
-				// Create bounds over the rect and select any Tokens that lie within those bounds
-				Rect2 dragBounds = new Rect2(_mouseDragStart.Value, mousePosition - _mouseDragStart.Value).Abs();
-				foreach(var token in _tokens) {
-					if(dragBounds.Encloses(token.Bounds)) _selectedTokens.Add(token);
+						// Activate the DraggingTool, to begin dragging the selected sprites
+						_draggingTool.IsDragging = true;
+
+					// If the mouse is currently not over any Token, clear the selected token collection
+					// and store the mouse position as drag start
+					} else {
+						if(!Input.IsActionPressed("shift")) _selectedTokens.Clear();
+						_mouseDragStart = mousePosition;
+					}	
 				}
 			}
-			// Then clear the select box
-			_mouseDragStart = null;
-		}
-		if(Input.IsActionJustPressed("delete")) {
-			foreach(var token in _selectedTokens) {
-				RemoveToken(token);
-				_world.RemoveToken(token);	
-			}
-		}
+			// If the left mouse is released, and there is currently a select box being dragged...
+			if(Input.IsActionJustReleased("select")) {
+				_draggingTool.IsDragging = false;
+				_resizingTool.StopResizing();
 
-		QueueRedraw();
+				if(_mouseDragStart != null) {
+					// Create bounds over the rect and select any Tokens that lie within those bounds
+					Rect2 dragBounds = new Rect2(_mouseDragStart.Value, mousePosition - _mouseDragStart.Value).Abs();
+					foreach(var token in _tokens) {
+						if(dragBounds.Encloses(token.Bounds)) _selectedTokens.Add(token);
+					}
+				}
+				// Then clear the select box
+				_mouseDragStart = null;
+			}
+			if(Input.IsActionJustPressed("delete")) {
+				foreach(var token in _selectedTokens) {
+					RemoveToken(token);
+					_world.RemoveToken(token);	
+				}
+			}
+
+			QueueRedraw();
+		}
 	}
 
     public override void _Draw() {

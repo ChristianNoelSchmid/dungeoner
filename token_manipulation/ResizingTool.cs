@@ -6,9 +6,9 @@ namespace Dungeoner.TokenManipulation;
 
 public partial class ResizingTool : Node2D {
     [Export]
-    private SelectionTool _selectionTool;
+    private SelectionTool _selectionTool = default!;
     [Export]
-	private Brackets _brackets;
+	private Brackets _brackets = default!;
 
     private bool _isResizing = false;
     public bool IsResizing => _isResizing;

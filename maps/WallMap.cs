@@ -36,12 +36,12 @@ public partial class WallMap : Node2D {
 
     public override void _Process(double delta) {
         foreach(((var gridPosition, var direction), bool active) in _uncommittedWalls) {
-            // If the wall was drawn on the left or right edge, it is a side panel
-            if(direction == Direction.Left) {
-
-            // If the wall was drawn on the top or bottom edge, it is a back panel   
-            } else if(direction == Direction.Up || direction == Direction.Down) {
-
+            var dirVec = new DirectionalVec(gridPosition, direction);
+            var neighbors = dirVec.GetNeighbors();
+            foreach(var neighbor in neighbors) {
+                if(_wallRenderers.TryGetEdge(neighbor.GridPosition, neighbor.Direction, out var edge)) {
+                    edge!.UpdateNeighborEdge(neighbor.DirectionTo(dirVec), active);
+                }
             }
         }
         foreach((var gridPosition, bool active) in _uncommittedTiles) {
@@ -77,9 +77,10 @@ public partial class WallMap : Node2D {
             }
             // Assign the position of the WallPanelRenderer to the grid position, with an offset to the 
             // top-left corner of the grid box
-            wallPanel.Position = gridPosition * Constants.GRID_SIZE - new Vector2(0, Constants.GRID_SIZE / 2);
+            wallPanel.Position = gridPosition * Constants.GRID_SIZE + (Vector2)edge.Vector() * (Constants.GRID_SIZE / 2.0f);
             // Add the WallPanelRenderer to the World and set it up
             _world.AddChild(wallPanel);
+            wallPanel.UpdateWallMeta(value, gridPosition);
 
             // Insert the sprite and the metadata into the collections
             _wallRenderers.InsertEdge(gridPosition, edge, wallPanel);
@@ -87,6 +88,10 @@ public partial class WallMap : Node2D {
         }
         _uncommittedWalls[(gridPosition, edge)] = true;
         _uncommittedTiles[gridPosition] = _tileMap.ContainsPosition(gridPosition);
+        foreach(var edgeNeighbor in new DirectionalVec(gridPosition, edge).GetNeighbors()) {
+            _uncommittedWalls[(edgeNeighbor.GridPosition, edgeNeighbor.Direction)] 
+                = _wallMetas.ContainsEdge(edgeNeighbor.GridPosition, edgeNeighbor.Direction);
+        }
         foreach(var neighborPosition in gridPosition.GetNeighbors()) {
             _uncommittedTiles[neighborPosition] = _tileMap.ContainsPosition(neighborPosition);
         }
@@ -101,7 +106,7 @@ public partial class WallMap : Node2D {
             _wallRenderers.RemoveEdge(from, edge);
             _wallMetas.RemoveEdge(from, edge);
 
-            _uncommittedWalls.Add((from, edge), false);
+            _uncommittedWalls[(from, edge)] = false;
         }
     }
 
@@ -121,7 +126,21 @@ public partial class WallMap : Node2D {
             wallMap.AddWallPanel(vertex1, dir, edge);
         }
         foreach((var gridPosition, var edge, var renderer) in _wallRenderers.Edges()) {
-            _uncommittedWalls.Add((gridPosition, edge), true);
+            _uncommittedWalls[(gridPosition, edge)] = true;
+
+            _uncommittedTiles[gridPosition] = _tileMap.ContainsPosition(gridPosition);
+            foreach(var neighbor in gridPosition.GetNeighbors()) {
+                _uncommittedTiles[neighbor] = _tileMap.ContainsPosition(neighbor);
+            }
+        }
+    }
+
+    public void RemoveAll(WallMap wallMap) {
+        foreach((var vertex1, var edge, _) in wallMap._wallMetas.Edges()) {
+            RemoveWallPanel(vertex1, edge);
+        }
+        foreach((var gridPosition, var edge, _) in wallMap._wallMetas.Edges()) {
+            _uncommittedWalls[(gridPosition, edge)] = true;
 
             _uncommittedTiles[gridPosition] = _tileMap.ContainsPosition(gridPosition);
             foreach(var neighbor in gridPosition.GetNeighbors()) {

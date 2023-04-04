@@ -16,7 +16,7 @@ public partial class TokenList : UiList {
 	List<TokenMeta> _listImgMetas = new();
 
 	public override void _Ready() {
-		_importer = (TokenImporter)GetNode("/root/Main/TokenImporter");
+		_importer = (TokenImporter)GetNode("/root/Main/Importers/TokenImporter");
 		_world = (TokenMap)GetNode("/root/Main/World");
 		_selectionTool = (SelectionTool)GetNode("/root/Main/SelectionTool");
 	}

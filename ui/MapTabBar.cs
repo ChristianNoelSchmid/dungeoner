@@ -5,6 +5,12 @@ using System;
 
 public partial class MapTabBar : Node
 {
+	[Export]
+	private Control _tileMenu;
+
+	[Export]
+	private Control _wallMenu;
+
 	private TilePainter _tilePainter = default!;
 	private WallPainter _wallPainter = default!;
 
@@ -18,10 +24,14 @@ public partial class MapTabBar : Node
 			case 0: 
 				_tilePainter.Activated = true;
 				_wallPainter.Activated = false;
+				_tileMenu.Visible = true;
+				_wallMenu.Visible = false;
 				break;
 			case 1:
 				_tilePainter.Activated = false;
 				_wallPainter.Activated = true;
+				_tileMenu.Visible = false;
+				_wallMenu.Visible = true;
 				break;
 		}
 	}

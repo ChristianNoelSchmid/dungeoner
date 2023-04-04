@@ -16,6 +16,10 @@ public partial class WallSideRenderer : WallPanelRenderer {
 		_rightShadow = (Sprite2D)FindChild("RightShadow");
 	}
 
+    public override void UpdateWallMeta(WallMeta meta, Vector2I gridPosition) { 
+		_drywall.Modulate = meta.DrywallColor; 
+	}
+
     public override void UpdateNeighborEdge(Direction direction, bool active) { }
 
     public override void UpdateNeighborTile(Direction direction, bool active) {

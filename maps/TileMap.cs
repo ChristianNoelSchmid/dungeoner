@@ -43,7 +43,7 @@ public partial class TileMap : Node2D {
     public override void _Draw() {
         foreach((var gridPosition, var tile) in _tiles) {
             var rect = new Rect2(gridPosition * Constants.GRID_SIZE - Constants.GRID_VECTOR / 2, Constants.GRID_VECTOR);
-            DrawTextureRectRegion(tile.Texture, rect, tile.Index.ImageBounds);
+            DrawTextureRect(tile.Texture, rect, true);
         }
     }
 }

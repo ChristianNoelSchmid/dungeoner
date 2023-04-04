@@ -6,8 +6,7 @@ using Godot;
 
 namespace Dungeoner.Importers;
 
-public class WallMeta : IMetaFile
-{
+public class WallMeta : IMetaFile {
     [JsonPropertyName("filePath")]
     public string FilePath { get; set; }
 
@@ -18,12 +17,19 @@ public class WallMeta : IMetaFile
     [JsonConverter(typeof(Rect2ListConverter))]
     public List<Rect2> BackPanelRects { get; set; }
 
+    [JsonPropertyName("drywallColor")]
+    [JsonConverter(typeof(ColorConverter))]
+    public Color DrywallColor { get; set; }
+
     private List<AtlasTexture> _textures;
     public Texture2D GetTexture(Vector2I position) {
         if(_textures == null) {
             _textures = Enumerable.Repeat<AtlasTexture>(null, BackPanelRects.Count).ToList();
         }
+
         int idx = position.GetHashCode() % BackPanelRects.Count;
+        if(idx < 0) idx = BackPanelRects.Count + idx;
+
         if(_textures[idx] == null) {
             _textures[idx] = new();
             var img = Image.LoadFromFile(FilePath);

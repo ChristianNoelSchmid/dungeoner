@@ -17,10 +17,10 @@ public partial class TileImporter : Node2D {
         foreach ((string fileName, var tileMeta) in tileMetas) {
 			if (File.Exists(tileMeta.FilePath)) {
 				for(int i = 0; i < tileMeta.Parts.Length; i += 1) {
-					var segment = tileMeta.Parts[i];
-					if(!_collection.Insert(segment.Key, new Tile { Meta = tileMeta, Index = segment })) {
+					var index = tileMeta.Parts[i];
+					if(!_collection.Insert(index.Key, new Tile { Meta = tileMeta, Index = index })) {
 						GD.PushError(
-							$"Duplicate token key `{segment.Key}` found. It will not be imported. " +
+							$"Duplicate token key `{index.Key}` found. It will not be imported. " +
 							$"Meta-file `{fileName}`, relative path: `{tileMeta.FilePath}`."
 						);
 					}

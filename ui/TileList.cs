@@ -12,7 +12,7 @@ public partial class TileList : UiList {
 	List<Tile> _listTileMetas = new();
 
     public override void _Ready() {
-		_importer = (TileImporter)GetNode("/root/Main/TileImporter");
+		_importer = (TileImporter)GetNode("/root/Main/Importers/TileImporter");
 		_painter = (TilePainter)GetNode("/root/Main/TilePainter");
     }
 
