@@ -1,0 +1,146 @@
+[gd_scene load_steps=21 format=3 uid="uid://ufebxlmi061a"]
+
+[ext_resource type="PackedScene" path="res://Dungeoner.Game/camera/main_camera.tscn" id="1_t46fc"]
+[ext_resource type="Script" path="res://Dungeoner.Game/Background.cs" id="2_u8wf8"]
+[ext_resource type="Script" path="res://Dungeoner.Game/importers/TokenImporter.cs" id="4_wreyg"]
+[ext_resource type="PackedScene" path="res://Dungeoner.Game/ui/brackets.tscn" id="5_6l0yx"]
+[ext_resource type="Script" path="res://Dungeoner.Game/importers/TileImporter.cs" id="5_h2n7p"]
+[ext_resource type="Script" path="res://Dungeoner.Game/importers/WallImporter.cs" id="6_inrlh"]
+[ext_resource type="PackedScene" uid="uid://bs586mo7omus" path="res://Dungeoner.Game/ui/ui.tscn" id="6_o0ab3"]
+[ext_resource type="Script" path="res://Dungeoner.Game/painters/WallPainter.cs" id="7_l8i02"]
+[ext_resource type="Script" path="res://Dungeoner.Game/maps/WallMap.cs" id="9_mtl58"]
+[ext_resource type="Script" path="res://Dungeoner.Game/maps/TileMap.cs" id="10_eaujs"]
+[ext_resource type="Texture2D" uid="uid://bht016ll8v3jl" path="res://assets/wall_cursor.png" id="11_fy1bw"]
+[ext_resource type="Script" path="res://Dungeoner.Game/Grid.cs" id="11_lihuv"]
+[ext_resource type="Script" path="res://Dungeoner.Game/painters/TilePainter.cs" id="12_ifbsp"]
+[ext_resource type="Script" path="res://Dungeoner.Game/maps/TokenMap.cs" id="13_0nsss"]
+[ext_resource type="Script" path="res://Dungeoner.Game/token_manipulation/SelectionTool.cs" id="14_7qojw"]
+[ext_resource type="Script" path="res://Dungeoner.Game/token_manipulation/DraggingTool.cs" id="15_ja5rw"]
+[ext_resource type="Script" path="res://Dungeoner.Game/token_manipulation/ResizingTool.cs" id="16_u6jsb"]
+[ext_resource type="Script" path="res://Dungeoner.Server/Events/NetworkManager.cs" id="18_8s7vu"]
+[ext_resource type="Script" path="res://Dungeoner.Game/network_events/TokenMovedEventHandler.cs" id="19_og560"]
+[ext_resource type="Script" path="res://Dungeoner.Game/network_events/TokenCreatedEventHandler.cs" id="20_nj5qh"]
+
+[node name="Main" type="Node"]
+metadata/_edit_horizontal_guides_ = [85.0]
+
+[node name="UiCanvas" type="CanvasLayer" parent="."]
+
+[node name="UI" parent="UiCanvas" instance=ExtResource("6_o0ab3")]
+size_flags_horizontal = 8
+
+[node name="Background" type="ColorRect" parent="." node_paths=PackedStringArray("_mainCamera")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -529.0
+offset_top = -304.0
+offset_right = -529.0
+offset_bottom = -304.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(512, 512)
+color = Color(0, 0, 0, 1)
+script = ExtResource("2_u8wf8")
+_mainCamera = NodePath("../Camera2D")
+
+[node name="Camera2D" parent="." node_paths=PackedStringArray("_uiCanvas") instance=ExtResource("1_t46fc")]
+scale = Vector2(0.860892, 1.03784)
+zoom = Vector2(3, 3)
+ZoomSpeed = 5.0
+_uiCanvas = NodePath("../UiCanvas/UI")
+
+[node name="Importers" type="Node2D" parent="."]
+
+[node name="TokenImporter" type="Node2D" parent="Importers"]
+script = ExtResource("4_wreyg")
+
+[node name="TileImporter" type="Node2D" parent="Importers"]
+script = ExtResource("5_h2n7p")
+
+[node name="WallImporter" type="Node2D" parent="Importers"]
+script = ExtResource("6_inrlh")
+
+[node name="WallPainter" type="Node2D" parent="." node_paths=PackedStringArray("_ui", "_importer", "_cursor", "_tileMap", "_worldWallMap", "_commitMap")]
+z_index = 1
+script = ExtResource("7_l8i02")
+_ui = NodePath("../UiCanvas/UI")
+_importer = NodePath("../Importers/WallImporter")
+_cursor = NodePath("WallCursor")
+_tileMap = NodePath("../TileMap")
+_worldWallMap = NodePath("../WallMap")
+_commitMap = NodePath("CommitMap")
+
+[node name="WallCursor" type="Sprite2D" parent="WallPainter"]
+texture = ExtResource("11_fy1bw")
+offset = Vector2(0, -7.5)
+
+[node name="CommitMap" type="Node2D" parent="WallPainter" node_paths=PackedStringArray("_world", "_tileMap")]
+script = ExtResource("9_mtl58")
+_world = NodePath("../../World")
+_tileMap = NodePath("../../TileMap")
+
+[node name="TileMap" type="Node2D" parent="." node_paths=PackedStringArray("_wallMap")]
+script = ExtResource("10_eaujs")
+_wallMap = NodePath("../WallMap")
+
+[node name="Grid" type="Node2D" parent="." node_paths=PackedStringArray("_mainCamera")]
+script = ExtResource("11_lihuv")
+_mainCamera = NodePath("../Camera2D")
+
+[node name="TilePainter" type="Node2D" parent="." node_paths=PackedStringArray("_ui", "_importer", "_world", "_worldTileMap", "_commitTileMap", "_worldWallMap")]
+script = ExtResource("12_ifbsp")
+_ui = NodePath("../UiCanvas/UI")
+_importer = NodePath("../Importers/TileImporter")
+_world = NodePath("../World")
+_worldTileMap = NodePath("../TileMap")
+_commitTileMap = NodePath("CommitMap")
+_worldWallMap = NodePath("../WallMap")
+
+[node name="CommitMap" type="Node2D" parent="TilePainter"]
+script = ExtResource("10_eaujs")
+
+[node name="WallMap" type="Node2D" parent="." node_paths=PackedStringArray("_world", "_tileMap")]
+script = ExtResource("9_mtl58")
+_world = NodePath("../World")
+_tileMap = NodePath("../TileMap")
+
+[node name="World" type="Node2D" parent="." node_paths=PackedStringArray("_tokenImporter", "_selectionTool")]
+y_sort_enabled = true
+script = ExtResource("13_0nsss")
+_tokenImporter = NodePath("../Importers/TokenImporter")
+_selectionTool = NodePath("../SelectionTool")
+
+[node name="SelectionTool" type="Node2D" parent="." node_paths=PackedStringArray("_world", "_uiCanvas", "_draggingTool", "_resizingTool")]
+script = ExtResource("14_7qojw")
+_world = NodePath("../World")
+_uiCanvas = NodePath("../UiCanvas/UI")
+_draggingTool = NodePath("DraggingTool")
+_resizingTool = NodePath("ResizingTool")
+
+[node name="DraggingTool" type="Node2D" parent="SelectionTool" node_paths=PackedStringArray("_selectionTool")]
+script = ExtResource("15_ja5rw")
+_selectionTool = NodePath("..")
+
+[node name="ResizingTool" type="Node2D" parent="SelectionTool" node_paths=PackedStringArray("_selectionTool", "_brackets")]
+script = ExtResource("16_u6jsb")
+_selectionTool = NodePath("..")
+_brackets = NodePath("Brackets")
+
+[node name="Brackets" parent="SelectionTool/ResizingTool" node_paths=PackedStringArray("_mainCamera") instance=ExtResource("5_6l0yx")]
+_mainCamera = NodePath("../../../Camera2D")
+
+[node name="NetworkEventParser" type="Node2D" parent="."]
+script = ExtResource("18_8s7vu")
+
+[node name="EventHandlers" type="Node2D" parent="NetworkEventParser"]
+
+[node name="TokenMovedEventHandler" type="Node2D" parent="NetworkEventParser/EventHandlers"]
+script = ExtResource("19_og560")
+
+[node name="TokenCreatedEventHandler" type="Node2D" parent="NetworkEventParser/EventHandlers" node_paths=PackedStringArray("_tokenMap")]
+script = ExtResource("20_nj5qh")
+_tokenMap = NodePath("../../../TokenMap")
+
+[connection signal="MouseEnterBracket" from="SelectionTool/ResizingTool/Brackets" to="SelectionTool" method="OnResizeBoxEnter"]
+[connection signal="MouseExitBracket" from="SelectionTool/ResizingTool/Brackets" to="SelectionTool" method="OnResizeBoxExit"]
