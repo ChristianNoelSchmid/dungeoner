@@ -1,0 +1,56 @@
+[gd_scene load_steps=5 format=3 uid="uid://ch1ugwpkxc5lw"]
+
+[ext_resource type="Script" path="res://maps/WallBackRenderer.cs" id="1_xic2w"]
+[ext_resource type="Texture2D" uid="uid://cu11frsvh3gnf" path="res://assets/walls/dungeon.png" id="2_hdr0r"]
+[ext_resource type="Texture2D" uid="uid://dbawpk16s4gql" path="res://assets/bit.png" id="3_knl38"]
+[ext_resource type="Texture2D" uid="uid://b8mrwckq16oo8" path="res://assets/shadow.png" id="4_5ll5k"]
+
+[node name="WallBack" type="Node2D"]
+script = ExtResource("1_xic2w")
+
+[node name="BackPanel" type="Sprite2D" parent="."]
+position = Vector2(0, -20)
+texture = ExtResource("2_hdr0r")
+centered = false
+offset = Vector2(-13, 0)
+
+[node name="LeftDrywall" type="Sprite2D" parent="."]
+modulate = Color(0.211765, 0.211765, 0.211765, 1)
+position = Vector2(-15, 7.2775e-12)
+scale = Vector2(4, 22)
+texture = ExtResource("3_knl38")
+centered = false
+offset = Vector2(0, -1)
+
+[node name="RightDrywall" type="Sprite2D" parent="."]
+modulate = Color(0.211765, 0.211765, 0.211765, 1)
+position = Vector2(12, 0)
+scale = Vector2(4, 22)
+texture = ExtResource("3_knl38")
+centered = false
+offset = Vector2(0, -1)
+
+[node name="TopDrywall" type="Sprite2D" parent="."]
+modulate = Color(0.211765, 0.211765, 0.211765, 1)
+position = Vector2(-15, -22)
+scale = Vector2(31, 3)
+texture = ExtResource("3_knl38")
+centered = false
+
+[node name="Shadow" type="Node2D" parent="."]
+position = Vector2(0.5, 0)
+scale = Vector2(27, 1)
+
+[node name="WallShadow" type="Sprite2D" parent="Shadow"]
+modulate = Color(0, 0, 0, 1)
+texture = ExtResource("4_5ll5k")
+centered = false
+offset = Vector2(-0.5, -8)
+
+[node name="TileShadow" type="Sprite2D" parent="Shadow"]
+modulate = Color(0, 0, 0, 1)
+position = Vector2(0, -1)
+texture = ExtResource("4_5ll5k")
+centered = false
+offset = Vector2(-0.5, 0)
+flip_v = true

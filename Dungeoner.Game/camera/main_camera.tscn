@@ -1,7 +1,0 @@
-[gd_scene load_steps=2 format=3]
-
-[ext_resource type="Script" path="res://Dungeoner.Game/camera/CameraMovement.cs" id="1_xm0lv"]
-
-[node name="Camera2D" type="Camera2D"]
-zoom = Vector2(2, 2)
-script = ExtResource("1_xm0lv")
