@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://dvbao8bvbdi7j"]
+[gd_scene load_steps=32 format=3 uid="uid://cqe5xxi765sj0"]
 
 [ext_resource type="PackedScene" path="res://camera/main_camera.tscn" id="1_t46fc"]
 [ext_resource type="Script" path="res://Background.cs" id="2_g7ucn"]
@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://dt7xkqqe2ikjl" path="res://ui/brackets.tscn" id="5_6l0yx"]
 [ext_resource type="Script" path="res://importers/TileImporter.cs" id="5_mb6d1"]
 [ext_resource type="Script" path="res://importers/WallImporter.cs" id="6_loniw"]
-[ext_resource type="PackedScene" uid="uid://b5kuba5ptwvvp" path="res://ui/ui.tscn" id="6_o0ab3"]
+[ext_resource type="PackedScene" uid="uid://cx7shu1f3k0kd" path="res://ui/ui.tscn" id="6_o0ab3"]
 [ext_resource type="Script" path="res://painters/WallPainter.cs" id="7_5prjc"]
 [ext_resource type="Script" path="res://maps/WallMap.cs" id="9_8f0mk"]
 [ext_resource type="Script" path="res://maps/TileMap.cs" id="10_h6d2a"]
@@ -18,10 +18,19 @@
 [ext_resource type="Script" path="res://token_manipulation/DraggingTool.cs" id="15_bi371"]
 [ext_resource type="Script" path="res://token_manipulation/ResizingTool.cs" id="16_2cbo5"]
 [ext_resource type="Script" path="res://network/NetworkManager.cs" id="18_x75ck"]
-[ext_resource type="Script" path="res://network_events/tokens/TokenMovedEventHandler.cs" id="19_x7fd7"]
-[ext_resource type="Script" path="res://network_events/tokens/TokenCreatedEventHandler.cs" id="20_ulug3"]
+[ext_resource type="Script" path="res://network_events/tokens/TokensTransformedEventHandler.cs" id="19_xbm57"]
+[ext_resource type="Script" path="res://network/ClientSynchronizer.cs" id="20_kpgqv"]
 [ext_resource type="Script" path="res://network/Pinger.cs" id="21_5015p"]
-[ext_resource type="Script" path="res://UserMap.cs" id="21_k8s80"]
+[ext_resource type="Script" path="res://network_events/tokens/UpdateTokenControlEventHandler.cs" id="21_mx2fs"]
+[ext_resource type="Script" path="res://network_events/map/WallPlacedEventHandler.cs" id="22_sorij"]
+[ext_resource type="Script" path="res://network_events/tokens/TokensCreatedEventHandler.cs" id="22_xi0h8"]
+[ext_resource type="Script" path="res://network_events/map/WallRemovedEventHandler.cs" id="23_mm25k"]
+[ext_resource type="Script" path="res://network_events/tokens/TokensDeletedEventHandler.cs" id="24_2prfs"]
+[ext_resource type="Script" path="res://network_events/map/TilePlacedEventHandler.cs" id="24_h7bq7"]
+[ext_resource type="Script" path="res://network_events/map/TileRemovedEventHandler.cs" id="25_1pnyf"]
+[ext_resource type="Script" path="res://maps/PermissionsMap.cs" id="27_qis7w"]
+[ext_resource type="Script" path="res://network_events/users/UpdateUserPermissionsEventHandler.cs" id="28_j2lch"]
+[ext_resource type="Script" path="res://maps/UserMap.cs" id="28_ybkgi"]
 
 [node name="Main" type="Node"]
 metadata/_edit_horizontal_guides_ = [85.0]
@@ -49,6 +58,7 @@ _mainCamera = NodePath("../Camera2D")
 [node name="Camera2D" parent="." node_paths=PackedStringArray("_uiCanvas") instance=ExtResource("1_t46fc")]
 scale = Vector2(0.860892, 1.03784)
 zoom = Vector2(3, 3)
+Speed = 500.0
 ZoomSpeed = 10.0
 _uiCanvas = NodePath("../UiCanvas/UI")
 
@@ -64,7 +74,7 @@ script = ExtResource("5_mb6d1")
 [node name="WallImporter" type="Node2D" parent="Importers"]
 script = ExtResource("6_loniw")
 
-[node name="WallPainter" type="Node2D" parent="." node_paths=PackedStringArray("_ui", "_importer", "_cursor", "_tileMap", "_worldWallMap", "_commitMap")]
+[node name="WallPainter" type="Node2D" parent="." node_paths=PackedStringArray("_ui", "_importer", "_cursor", "_tileMap", "_worldWallMap", "_commitMap", "_networkManager")]
 z_index = 1
 script = ExtResource("7_5prjc")
 _ui = NodePath("../UiCanvas/UI")
@@ -73,6 +83,7 @@ _cursor = NodePath("WallCursor")
 _tileMap = NodePath("../TileMap")
 _worldWallMap = NodePath("../WallMap")
 _commitMap = NodePath("CommitMap")
+_networkManager = NodePath("../NetworkManager")
 
 [node name="WallCursor" type="Sprite2D" parent="WallPainter"]
 texture = ExtResource("11_fy1bw")
@@ -91,7 +102,7 @@ _wallMap = NodePath("../WallMap")
 script = ExtResource("11_ixn8e")
 _mainCamera = NodePath("../Camera2D")
 
-[node name="TilePainter" type="Node2D" parent="." node_paths=PackedStringArray("_ui", "_importer", "_world", "_worldTileMap", "_commitTileMap", "_worldWallMap")]
+[node name="TilePainter" type="Node2D" parent="." node_paths=PackedStringArray("_ui", "_importer", "_world", "_worldTileMap", "_commitTileMap", "_worldWallMap", "_networkManager")]
 script = ExtResource("12_falnv")
 _ui = NodePath("../UiCanvas/UI")
 _importer = NodePath("../Importers/TileImporter")
@@ -99,6 +110,7 @@ _world = NodePath("../TokenMap")
 _worldTileMap = NodePath("../TileMap")
 _commitTileMap = NodePath("CommitMap")
 _worldWallMap = NodePath("../WallMap")
+_networkManager = NodePath("../NetworkManager")
 
 [node name="CommitMap" type="Node2D" parent="TilePainter"]
 script = ExtResource("10_h6d2a")
@@ -108,23 +120,27 @@ script = ExtResource("9_8f0mk")
 _world = NodePath("../TokenMap")
 _tileMap = NodePath("../TileMap")
 
-[node name="TokenMap" type="Node2D" parent="." node_paths=PackedStringArray("_tokenImporter", "_selectionTool")]
+[node name="TokenMap" type="Node2D" parent="." node_paths=PackedStringArray("_tokenImporter", "_selectionTool", "_permissionsMap")]
 y_sort_enabled = true
 script = ExtResource("13_d76jj")
 _tokenImporter = NodePath("../Importers/TokenImporter")
 _selectionTool = NodePath("../SelectionTool")
+_permissionsMap = NodePath("../PermissionsMap")
 
-[node name="SelectionTool" type="Node2D" parent="." node_paths=PackedStringArray("_world", "_uiCanvas", "_draggingTool", "_resizingTool", "_netManager")]
+[node name="SelectionTool" type="Node2D" parent="." node_paths=PackedStringArray("_tokenMap", "_ui", "_draggingTool", "_resizingTool", "_netManager", "_userMap", "_permissionsMap")]
 script = ExtResource("14_buur3")
-_world = NodePath("../TokenMap")
-_uiCanvas = NodePath("../UiCanvas/UI")
+_tokenMap = NodePath("../TokenMap")
+_ui = NodePath("../UiCanvas/UI")
 _draggingTool = NodePath("DraggingTool")
 _resizingTool = NodePath("ResizingTool")
 _netManager = NodePath("../NetworkManager")
+_userMap = NodePath("../UserMap")
+_permissionsMap = NodePath("../PermissionsMap")
 
-[node name="DraggingTool" type="Node2D" parent="SelectionTool" node_paths=PackedStringArray("_selectionTool")]
+[node name="DraggingTool" type="Node2D" parent="SelectionTool" node_paths=PackedStringArray("_selectionTool", "_world")]
 script = ExtResource("15_bi371")
 _selectionTool = NodePath("..")
+_world = NodePath("../../TokenMap")
 
 [node name="ResizingTool" type="Node2D" parent="SelectionTool" node_paths=PackedStringArray("_selectionTool", "_brackets")]
 script = ExtResource("16_2cbo5")
@@ -134,25 +150,82 @@ _brackets = NodePath("Brackets")
 [node name="Brackets" parent="SelectionTool/ResizingTool" node_paths=PackedStringArray("_mainCamera") instance=ExtResource("5_6l0yx")]
 _mainCamera = NodePath("../../../Camera2D")
 
-[node name="NetworkManager" type="Node" parent="." node_paths=PackedStringArray("_userMap")]
+[node name="NetworkManager" type="Node" parent="." node_paths=PackedStringArray("_userMap", "_sync")]
 script = ExtResource("18_x75ck")
 _userMap = NodePath("../UserMap")
-
-[node name="Tokens" type="Node" parent="NetworkManager"]
-
-[node name="TokenMovedEventHandler" type="Node" parent="NetworkManager/Tokens" node_paths=PackedStringArray("_map")]
-script = ExtResource("19_x7fd7")
-_map = NodePath("../../../TokenMap")
-
-[node name="TokenCreatedEventHandler" type="Node" parent="NetworkManager/Tokens" node_paths=PackedStringArray("_importer", "_map")]
-script = ExtResource("20_ulug3")
-_importer = NodePath("../../../Importers/TokenImporter")
-_map = NodePath("../../../TokenMap")
+_sync = NodePath("ClientSynchronizer")
 
 [node name="Pinger" type="Node" parent="NetworkManager" node_paths=PackedStringArray("_manager", "_userMap")]
 script = ExtResource("21_5015p")
 _manager = NodePath("..")
 _userMap = NodePath("../../UserMap")
 
+[node name="ClientSynchronizer" type="Node" parent="NetworkManager" node_paths=PackedStringArray("_netManager", "_tokenMap", "_tileMap", "_wallMap", "_permissionsMap")]
+script = ExtResource("20_kpgqv")
+_netManager = NodePath("..")
+_tokenMap = NodePath("../../TokenMap")
+_tileMap = NodePath("../../TileMap")
+_wallMap = NodePath("../../WallMap")
+_permissionsMap = NodePath("../../PermissionsMap")
+
+[node name="Tokens" type="Node" parent="NetworkManager"]
+
+[node name="TokensTransformedEventHandler" type="Node" parent="NetworkManager/Tokens" node_paths=PackedStringArray("_permissionsMap", "_tokenMap")]
+script = ExtResource("19_xbm57")
+_permissionsMap = NodePath("../../../PermissionsMap")
+_tokenMap = NodePath("../../../TokenMap")
+
+[node name="TokenCreatedEventHandler" type="Node" parent="NetworkManager/Tokens" node_paths=PackedStringArray("_importer", "_map", "_permissionsMap")]
+script = ExtResource("22_xi0h8")
+_importer = NodePath("../../../Importers/TokenImporter")
+_map = NodePath("../../../TokenMap")
+_permissionsMap = NodePath("../../../PermissionsMap")
+
+[node name="UpdateTokenControlEventHandler" type="Node" parent="NetworkManager/Tokens" node_paths=PackedStringArray("_permissionsMap")]
+script = ExtResource("21_mx2fs")
+_permissionsMap = NodePath("../../../PermissionsMap")
+
+[node name="TokensDeletedEventHandler" type="Node" parent="NetworkManager/Tokens" node_paths=PackedStringArray("_tokenMap", "_permissionsMap")]
+script = ExtResource("24_2prfs")
+_tokenMap = NodePath("../../../TokenMap")
+_permissionsMap = NodePath("../../../PermissionsMap")
+
+[node name="Map" type="Node" parent="NetworkManager"]
+
+[node name="WallPlacedEventHandler" type="Node" parent="NetworkManager/Map" node_paths=PackedStringArray("_importer", "_map")]
+script = ExtResource("22_sorij")
+_importer = NodePath("../../../Importers/WallImporter")
+_map = NodePath("../../../WallMap")
+
+[node name="WallRemovedEventHandler" type="Node" parent="NetworkManager/Map" node_paths=PackedStringArray("_map")]
+script = ExtResource("23_mm25k")
+_map = NodePath("../../../WallMap")
+
+[node name="TilePlacedEventHandler" type="Node" parent="NetworkManager/Map" node_paths=PackedStringArray("_importer", "_map")]
+script = ExtResource("24_h7bq7")
+_importer = NodePath("../../../Importers/TileImporter")
+_map = NodePath("../../../TileMap")
+
+[node name="TileRemovedEventHandler" type="Node" parent="NetworkManager/Map" node_paths=PackedStringArray("_map")]
+script = ExtResource("25_1pnyf")
+_map = NodePath("../../../TileMap")
+
+[node name="Users" type="Node" parent="NetworkManager"]
+
+[node name="UpdateUserPermissionsEventHandler" type="Node" parent="NetworkManager/Users" node_paths=PackedStringArray("_userMap", "_permissionsMap", "_ui")]
+script = ExtResource("28_j2lch")
+_userMap = NodePath("../../../UserMap")
+_permissionsMap = NodePath("../../../PermissionsMap")
+_ui = NodePath("../../../UiCanvas/UI")
+
+[node name="PermissionsMap" type="Node" parent="." node_paths=PackedStringArray("_userMap", "_tokenMap", "_netManager")]
+script = ExtResource("27_qis7w")
+_userMap = NodePath("../UserMap")
+_tokenMap = NodePath("../TokenMap")
+_netManager = NodePath("../NetworkManager")
+
 [node name="UserMap" type="Node" parent="."]
-script = ExtResource("21_k8s80")
+script = ExtResource("28_ybkgi")
+
+[connection signal="MouseEnterBracket" from="SelectionTool/ResizingTool/Brackets" to="SelectionTool" method="OnResizeBoxEnter"]
+[connection signal="MouseExitBracket" from="SelectionTool/ResizingTool/Brackets" to="SelectionTool" method="OnResizeBoxExit"]

@@ -6,8 +6,9 @@ using Godot;
 
 namespace Dungeoner.GodotExtensions;
 
-public static class Vector2Extensions {
-    private static readonly IReadOnlyDictionary<Vector2I, Direction> s_directionMatches 
+public static class Vector2Extensions
+{
+    private static readonly IReadOnlyDictionary<Vector2I, Direction> s_directionMatches
         = new Dictionary<Vector2I, Direction>() {
             { new( 0, -1), Direction.Up },
             { new( 1, -1), Direction.UpRight },
@@ -19,14 +20,17 @@ public static class Vector2Extensions {
             { new(-1, -1), Direction.UpLeft }
         };
 
-    public static Direction? DirectionTo(this Vector2I vector, Vector2I other) {
+    public static Direction? DirectionTo(this Vector2I vector, Vector2I other)
+    {
         var distSquared = (vector.X - other.X) * (vector.X - other.X) + (vector.Y - other.Y) * (vector.Y - other.Y);
-        if(distSquared > 2) return null;
+        if (distSquared > 2) return null;
 
         return s_directionMatches[other - vector];
     }
-    public static Vector2I GetNeighbor(this Vector2I vector, Direction to) {
-        return to switch {
+    public static Vector2I GetNeighbor(this Vector2I vector, Direction to)
+    {
+        return to switch
+        {
             Direction.Up => new(vector.X, vector.Y - 1),
             Direction.UpRight => new(vector.X + 1, vector.Y - 1),
             Direction.Right => new(vector.X + 1, vector.Y),
@@ -39,7 +43,8 @@ public static class Vector2Extensions {
         };
     }
 
-    public static HashSet<Vector2I> GetNeighbors(this Vector2I vector) {
+    public static HashSet<Vector2I> GetNeighbors(this Vector2I vector)
+    {
         return new HashSet<Vector2I>(
             new Vector2I[] {
                 new(vector.X,     vector.Y - 1),
@@ -52,5 +57,5 @@ public static class Vector2Extensions {
                 new(vector.X - 1, vector.Y - 1),
             }
         );
-    } 
+    }
 }

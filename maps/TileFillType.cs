@@ -1,7 +1,8 @@
 
 namespace Dungeoner.Maps;
 
-public enum TileFillType {
+public enum TileFillType
+{
     Single,
     Fill
 }

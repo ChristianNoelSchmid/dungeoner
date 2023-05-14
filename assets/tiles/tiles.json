@@ -1,0 +1,29 @@
+[
+	{
+		"file_path": "./tiles.png",
+		"parts": [
+			{
+				"key": "simple/cobblestone",
+				"rects": [
+					[
+						0,
+						0,
+						27,
+						27
+					]
+				]
+			},
+			{
+				"key": "simple/redstone",
+				"rects": [
+					[
+						27,
+						0,
+						27,
+						27
+					]
+				]
+			}
+		]
+	}
+]

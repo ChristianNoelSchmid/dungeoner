@@ -4,5 +4,5 @@ using System;
 
 public abstract partial class UiList : ItemList
 {
-	public abstract void QueryList(params string[] globs);
+    public abstract void QueryList(params string[] globs);
 }

@@ -3,7 +3,8 @@ using System;
 
 namespace Dungeoner.Server.Events;
 
-public class NetworkAuthResult {
+public class NetworkAuthResult
+{
     public byte[]? Data { get; private set; }
     public bool IsSuccessful => Data != null;
     public bool IsCompleted => Data?.Length == 0;

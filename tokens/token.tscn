@@ -1,14 +1,18 @@
-[gd_scene load_steps=3 format=3 uid="uid://doplygakbyw8h"]
+[gd_scene load_steps=4 format=3 uid="uid://doplygakbyw8h"]
 
 [ext_resource type="Script" path="res://tokens/Token.cs" id="1_cnefx"]
 [ext_resource type="Script" path="res://tokens/TokenSprite.cs" id="2_0nm8t"]
+[ext_resource type="Texture2D" uid="uid://djc6tnyw8d0nw" path="res://assets/tokens/tokens.png" id="2_qwkjt"]
 
 [node name="Token" type="Node2D"]
+y_sort_enabled = true
 script = ExtResource("1_cnefx")
 
 [node name="TokenSprite" type="Sprite2D" parent="."]
 y_sort_enabled = true
+texture = ExtResource("2_qwkjt")
 centered = false
+region_rect = Rect2(0, 0, 15, 27)
 script = ExtResource("2_0nm8t")
 
 [connection signal="MouseEnter" from="TokenSprite" to="." method="OnTokenSpriteMouseEnter"]

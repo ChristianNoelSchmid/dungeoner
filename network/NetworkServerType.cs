@@ -1,7 +1,8 @@
 
 namespace Dungeoner.Server.Events;
 
-public enum NetworkServerType {
+public enum NetworkServerType
+{
     Host,
     Client
 }

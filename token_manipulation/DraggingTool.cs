@@ -5,67 +5,103 @@ namespace Dungeoner.TokenManipulation;
 
 public partial class DraggingTool : Node2D
 {
-	[Export]
-	private SelectionTool _selectionTool = default!;
+    [Export] private SelectionTool _selectionTool = default!;
+    [Export] private Node2D _world = default!;
+    private PackedScene _tokenScene = GD.Load<PackedScene>("res://tokens/token.tscn");
 
-	private Dictionary<Token, Sprite2D> _dragSpriteMapping = new();
-	private Dictionary<Sprite2D, Vector2> _offsets = new();
+    private Dictionary<Token, Token> _dragTokenMapping = new();
+    private Dictionary<Token, Vector2> _offsets = new();
 
-	private bool _isDragging = false;
-	public bool IsDragging { 
-		get => _isDragging;
-		set {
-			_isDragging = value;
-			var mousePosition = GetGlobalMousePosition();
-			if(_isDragging) {
-				_dragSpriteMapping.Clear();
-				_offsets.Clear();
+    private bool _isDragging = false;
+    private bool _flipped = false;
+    public bool IsDragging
+    {
+        get => _isDragging;
+        set
+        {
+            _isDragging = value;
+            var mousePosition = GetGlobalMousePosition();
+            if (_isDragging)
+            {
+                _dragTokenMapping.Clear();
+                _offsets.Clear();
+                _flipped = false;
 
-				foreach(var token in _selectionTool.SelectedTokens) {
-					var tokenSprite = token.GetChild<Sprite2D>(0);
-					var sprite = new Sprite2D() { 
-						Texture = tokenSprite.Texture,
-						Offset = tokenSprite.Offset,
-						Centered = false,
-						GlobalPosition = token.GlobalPosition,
-						Modulate = new Color(2.0f, 2.0f, 2.0f, 0.75f)
-					};
-					_dragSpriteMapping[token] = sprite;
-					_offsets.Add(sprite, token.Position - mousePosition);
+                foreach (var selectedToken in _selectionTool.SelectedTokens)
+                {
+                    var dragToken = _tokenScene.Instantiate<Token>();
+                    dragToken.Instance = selectedToken.Instance;
+                    dragToken.Modulate = new Color(2.0f, 2.0f, 2.0f, 0.75f);
+                    dragToken.Teleport(selectedToken.PivotPosition);
+                    dragToken.Scale = selectedToken.Scale;
 
-					AddChild(sprite);
-				}
-			}
-		}
-	}
+                    _dragTokenMapping[selectedToken] = dragToken;
+                    _offsets.Add(dragToken, selectedToken.PivotPosition - mousePosition);
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta) {
-		var mousePosition = GetGlobalMousePosition();
-		if(IsDragging) {
-			foreach(var token in _selectionTool.SelectedTokens) {
-				var mappedSprite = _dragSpriteMapping[token];
-				mappedSprite.GlobalPosition = _offsets[mappedSprite] + mousePosition;
+                    _world.AddChild(dragToken);
+                    dragToken.Direction = selectedToken.Direction;
+                }
+            }
+        }
+    }
 
-				if(!Input.IsActionPressed("alt")) {
-					var gridPosition = new Vector2(
-						Mathf.Round(mappedSprite.GlobalPosition.X / Constants.GRID_SIZE),
-						Mathf.Round(mappedSprite.GlobalPosition.Y / Constants.GRID_SIZE)
-					);
-					mappedSprite.GlobalPosition = new(
-						gridPosition.X * Constants.GRID_SIZE,
-						gridPosition.Y * Constants.GRID_SIZE
-					);
-				}
-			}
-		}
-	}
+    // Called every frame. 'delta' is the elapsed time since the previous frame.
+    public override void _Process(double delta)
+    {
+        var mousePosition = GetGlobalMousePosition();
+        if (IsDragging)
+        {
+            foreach (var token in _selectionTool.SelectedTokens)
+            {
+                var dragToken = _dragTokenMapping[token];
+                dragToken.Teleport(_offsets[dragToken] + mousePosition);
 
-	public void CommitPositions() {
-		foreach(var token in _selectionTool.SelectedTokens) {
-			var mappedSprite = _dragSpriteMapping[token];
-			token.MapPosition = mappedSprite.GlobalPosition;
-			RemoveChild(mappedSprite);
-		}
-	}
+                if (!Input.IsActionPressed("alt"))
+                {
+                    var gridPosition = new Vector2(
+                        Mathf.Round(dragToken.PivotPosition.X / Constants.GRID_SIZE),
+                        Mathf.Round(dragToken.PivotPosition.Y / Constants.GRID_SIZE)
+                    );
+                    if (Mathf.RoundToInt(dragToken.Scale.X * dragToken.Instance.Part.GridSize!.Value.X) % 2 == 0)
+                    {
+                        gridPosition.X -= 0.5f;
+                    }
+                    if (Mathf.RoundToInt(dragToken.Scale.Y * dragToken.Instance.Part.GridSize!.Value.Y) % 2 == 0)
+                    {
+                        gridPosition.Y -= 0.5f;
+                    }
+
+                    dragToken.Teleport(new(
+                        gridPosition.X * Constants.GRID_SIZE,
+                        gridPosition.Y * Constants.GRID_SIZE
+                    ));
+                }
+            }
+        }
+    }
+
+    public void FlipAll()
+    {
+        _flipped = !_flipped;
+        foreach (var token in _dragTokenMapping.Values)
+        {
+            if (token.Direction == Direction.Left) token.Direction = Direction.Right;
+            else token.Direction = Direction.Left;
+        }
+    }
+
+    public void CommitPositions()
+    {
+        foreach (var token in _selectionTool.SelectedTokens)
+        {
+            var dragToken = _dragTokenMapping[token];
+            token.PivotPosition = dragToken.PivotPosition;
+            if (_flipped)
+            {
+                if (token.Direction == Direction.Left) token.Direction = Direction.Right;
+                else token.Direction = Direction.Left;
+            }
+            _world.RemoveChild(dragToken);
+        }
+    }
 }

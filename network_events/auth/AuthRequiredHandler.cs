@@ -6,7 +6,8 @@ using Dungeoner.Server.Events.NetworkEventHandlers;
 public record AuthRequiredModel : NetworkEventModel;
 
 [NetworkEvent("AuthRequired")]
-public partial class AuthRequiredHandler : NetworkEventHandler<HelloModel> {
+public partial class AuthRequiredHandler : NetworkEventHandler<HelloModel>
+{
     protected override void OnClientEventProcess(HelloModel netEvent, ClientCallback callback) { }
     protected override void OnHostEventProcess(HelloModel netEvent, IPEndPoint sender, HostCallback callback) { }
 }

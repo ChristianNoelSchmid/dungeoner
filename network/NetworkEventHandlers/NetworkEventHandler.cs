@@ -13,15 +13,19 @@ using Server.Networking;
 
 namespace Dungeoner.Server.Events.NetworkEventHandlers;
 
-public abstract partial class NetworkEventHandler : Node { 
+public abstract partial class NetworkEventHandler : Node
+{
     internal NetworkManager _manager;
-    internal abstract void Invoke(byte[] data, IPEndPoint senderEndPoint); 
+    internal abstract void Invoke(byte[] data, IPEndPoint senderEndPoint);
 }
 
-public abstract partial class NetworkEventHandler<T> : NetworkEventHandler {
+public abstract partial class NetworkEventHandler<T> : NetworkEventHandler
+{
     private readonly ConcurrentQueue<(T netEvent, IPEndPoint sender)> _events = new();
-    private bool TryGetEvent(out T? netEvent, out IPEndPoint? sender) {
-        if(_events.TryDequeue(out var contents)) {
+    private bool TryGetEvent(out T? netEvent, out IPEndPoint? sender)
+    {
+        if (_events.TryDequeue(out var contents))
+        {
             netEvent = contents.netEvent;
             sender = contents.sender;
             return true;
@@ -34,7 +38,8 @@ public abstract partial class NetworkEventHandler<T> : NetworkEventHandler {
 
     // Invocation from general object to actual parameter type
     // Called by the 
-    internal override void Invoke(byte[] data, IPEndPoint senderEndPoint) {
+    internal override void Invoke(byte[] data, IPEndPoint senderEndPoint)
+    {
         _events.Enqueue((Serializer.Deserialize<T>(new MemoryStream(data)), senderEndPoint));
     }
 
@@ -42,9 +47,12 @@ public abstract partial class NetworkEventHandler<T> : NetworkEventHandler {
     protected abstract void OnHostEventProcess(T netEvent, IPEndPoint sender, HostCallback callback);
     protected abstract void OnClientEventProcess(T netEvent, ClientCallback callback);
 
-    public override void _Process(double delta) {
-        while(TryGetEvent(out var netEvent, out var sender)) {
-            if(_manager.IsHost) {
+    public override void _Process(double delta)
+    {
+        while (TryGetEvent(out var netEvent, out var sender))
+        {
+            if (_manager.IsHost)
+            {
                 OnHostEventProcess(
                     netEvent!, sender!, new HostCallback(
                         SendToCaller: (model, isRel) => _manager.SendTo(sender!, model, isRel),
@@ -52,7 +60,9 @@ public abstract partial class NetworkEventHandler<T> : NetworkEventHandler {
                         SendToAll: (model, isRel) => _manager.SendToAll(model, isRel)
                     )
                 );
-            } else { 
+            }
+            else
+            {
                 OnClientEventProcess(
                     netEvent!, new ClientCallback(
                         SendToHost: (model, isRel) => _manager.SendToHost(model, isRel)

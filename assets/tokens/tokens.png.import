@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b8x51cr5nftrk"
-path="res://.godot/imported/goblin.png-2092af46d82173c609df59a576e0e9de.ctex"
+uid="uid://djc6tnyw8d0nw"
+path="res://.godot/imported/tokens.png-968ac26dd9060fb643b7144d4cc5fe8a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tokens/goblin.png"
-dest_files=["res://.godot/imported/goblin.png-2092af46d82173c609df59a576e0e9de.ctex"]
+source_file="res://assets/tokens/tokens.png"
+dest_files=["res://.godot/imported/tokens.png-968ac26dd9060fb643b7144d4cc5fe8a.ctex"]
 
 [params]
 

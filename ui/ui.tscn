@@ -1,16 +1,17 @@
-[gd_scene load_steps=10 format=3 uid="uid://b5kuba5ptwvvp"]
+[gd_scene load_steps=11 format=3 uid="uid://cx7shu1f3k0kd"]
 
-[ext_resource type="Script" path="res://ui/UiCanvas.cs" id="1_ik6tu"]
-[ext_resource type="Script" path="res://ui/MainTabBar.cs" id="2_koloa"]
-[ext_resource type="Script" path="res://ui/NetworkPanel.cs" id="2_mm26i"]
-[ext_resource type="Script" path="res://ui/SearchBar.cs" id="3_nsob6"]
-[ext_resource type="Script" path="res://ui/TokenList.cs" id="4_fgark"]
-[ext_resource type="Script" path="res://ui/MapTabBar.cs" id="5_fmo0o"]
+[ext_resource type="Script" path="res://ui/UiMain.cs" id="1_ia42r"]
+[ext_resource type="Script" path="res://ui/UiMainTabBar.cs" id="2_koloa"]
+[ext_resource type="Script" path="res://ui/UiNetworkPanel.cs" id="2_mm26i"]
+[ext_resource type="Script" path="res://ui/UiSearchBar.cs" id="3_nsob6"]
+[ext_resource type="Script" path="res://ui/UiPermissionsPanel.cs" id="3_rfssi"]
+[ext_resource type="Script" path="res://ui/UiTokenList.cs" id="4_fgark"]
+[ext_resource type="Script" path="res://ui/UiMapTabBar.cs" id="5_fmo0o"]
 [ext_resource type="Script" path="res://ui/UiTileMenuFillChoice.cs" id="6_w6ffm"]
-[ext_resource type="Script" path="res://ui/TileList.cs" id="7_idpnl"]
+[ext_resource type="Script" path="res://ui/UiTileList.cs" id="7_idpnl"]
 [ext_resource type="Script" path="res://ui/UiWallMenuFillChoice.cs" id="8_xvoaw"]
 
-[node name="UI" type="MarginContainer"]
+[node name="UI" type="MarginContainer" node_paths=PackedStringArray("_mainPanel", "_mainTabBar", "_mapMenu")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -18,27 +19,36 @@ offset_top = 1.0
 offset_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_ik6tu")
+script = ExtResource("1_ia42r")
+_mainPanel = NodePath("HBoxContainer/VBoxContainer")
+_mainTabBar = NodePath("HBoxContainer/VBoxContainer/MainTabPanel/MainTabs")
+_mainPanels = Array[Control]([null, null])
+_mapMenu = NodePath("HBoxContainer/VBoxContainer/MapMenu")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 2
 
-[node name="NetworkPanel" type="Panel" parent="HBoxContainer"]
+[node name="NetworkVBox" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="NetworkPanel" type="Panel" parent="HBoxContainer/NetworkVBox" node_paths=PackedStringArray("_ui", "_permissionsPanel")]
 custom_minimum_size = Vector2(132, 100)
 layout_mode = 2
 size_flags_vertical = 0
 script = ExtResource("2_mm26i")
+_ui = NodePath("../../..")
+_permissionsPanel = NodePath("../PermissionsPanel")
 
-[node name="Panel" type="VBoxContainer" parent="HBoxContainer/NetworkPanel"]
+[node name="Panel" type="VBoxContainer" parent="HBoxContainer/NetworkVBox/NetworkPanel"]
 custom_minimum_size = Vector2(128, 64)
 layout_mode = 2
 offset_left = 4.0
 offset_right = 132.0
-offset_bottom = 64.0
+offset_bottom = 97.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 
-[node name="ServerTypeList" type="ItemList" parent="HBoxContainer/NetworkPanel/Panel"]
+[node name="ServerTypeList" type="ItemList" parent="HBoxContainer/NetworkVBox/NetworkPanel/Panel"]
 custom_minimum_size = Vector2(0, 62)
 layout_mode = 2
 size_flags_vertical = 3
@@ -46,9 +56,44 @@ item_count = 2
 item_0/text = "Host"
 item_1/text = "Client"
 
-[node name="OpenCheckBox" type="CheckButton" parent="HBoxContainer/NetworkPanel/Panel"]
+[node name="OpenCheckBox" type="CheckButton" parent="HBoxContainer/NetworkVBox/NetworkPanel/Panel"]
 layout_mode = 2
 text = "Open"
+
+[node name="PermissionsPanel" type="Panel" parent="HBoxContainer/NetworkVBox"]
+custom_minimum_size = Vector2(132, 130)
+layout_mode = 2
+size_flags_vertical = 0
+script = ExtResource("3_rfssi")
+
+[node name="Panel" type="VBoxContainer" parent="HBoxContainer/NetworkVBox/PermissionsPanel"]
+custom_minimum_size = Vector2(128, 64)
+layout_mode = 2
+offset_left = 4.0
+offset_right = 132.0
+offset_bottom = 131.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer/NetworkVBox/PermissionsPanel/Panel"]
+layout_mode = 2
+
+[node name="PermissionsLabel" type="Label" parent="HBoxContainer/NetworkVBox/PermissionsPanel/Panel/PanelContainer"]
+layout_mode = 2
+text = "Permissions"
+
+[node name="CreateCheckBox" type="CheckButton" parent="HBoxContainer/NetworkVBox/PermissionsPanel/Panel"]
+layout_mode = 2
+text = "Create"
+
+[node name="MoveCheckBox" type="CheckButton" parent="HBoxContainer/NetworkVBox/PermissionsPanel/Panel"]
+layout_mode = 2
+text = "Move"
+
+[node name="DeleteCheckBox" type="CheckButton" parent="HBoxContainer/NetworkVBox/PermissionsPanel/Panel"]
+layout_mode = 2
+text = "Delete
+"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
 layout_mode = 2
@@ -218,8 +263,11 @@ script = ExtResource("7_idpnl")
 
 [connection signal="focus_entered" from="." to="." method="OnFocusEntered"]
 [connection signal="focus_exited" from="." to="." method="OnFocusExited"]
-[connection signal="item_selected" from="HBoxContainer/NetworkPanel/Panel/ServerTypeList" to="HBoxContainer/NetworkPanel" method="OnServerTypeItemClicked"]
-[connection signal="toggled" from="HBoxContainer/NetworkPanel/Panel/OpenCheckBox" to="HBoxContainer/NetworkPanel" method="OnCheckBoxClicked"]
+[connection signal="item_selected" from="HBoxContainer/NetworkVBox/NetworkPanel/Panel/ServerTypeList" to="HBoxContainer/NetworkVBox/NetworkPanel" method="OnServerTypeItemClicked"]
+[connection signal="toggled" from="HBoxContainer/NetworkVBox/NetworkPanel/Panel/OpenCheckBox" to="HBoxContainer/NetworkVBox/NetworkPanel" method="OnCheckBoxClicked"]
+[connection signal="toggled" from="HBoxContainer/NetworkVBox/PermissionsPanel/Panel/CreateCheckBox" to="HBoxContainer/NetworkVBox/PermissionsPanel" method="CreateChecked"]
+[connection signal="toggled" from="HBoxContainer/NetworkVBox/PermissionsPanel/Panel/MoveCheckBox" to="HBoxContainer/NetworkVBox/PermissionsPanel" method="MoveChecked"]
+[connection signal="toggled" from="HBoxContainer/NetworkVBox/PermissionsPanel/Panel/DeleteCheckBox" to="HBoxContainer/NetworkVBox/PermissionsPanel" method="DeleteChecked"]
 [connection signal="tab_changed" from="HBoxContainer/VBoxContainer/MainTabPanel/MainTabs" to="HBoxContainer/VBoxContainer/MainTabPanel/MainTabs" method="OnTabChange"]
 [connection signal="mouse_entered" from="HBoxContainer/VBoxContainer/TokenMenu/LineEdit" to="HBoxContainer/VBoxContainer/TokenMenu/LineEdit" method="OnMouseEnter"]
 [connection signal="mouse_exited" from="HBoxContainer/VBoxContainer/TokenMenu/LineEdit" to="HBoxContainer/VBoxContainer/TokenMenu/LineEdit" method="OnMouseExit"]

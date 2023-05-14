@@ -1,6 +1,7 @@
 
 namespace Dungeoner;
 
-public interface IMetaFile {
+public interface IMetaFile
+{
     public string FilePath { get; set; }
 }
