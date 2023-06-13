@@ -193,10 +193,14 @@ public partial class NetworkManager : Node
 
     public void SendToAll(NetworkEventModel netEvent, bool isRel)
     {
-        QueueMessage(DatagramOutgoingSendType.SendTo, netEvent, isRel, _endPointIds.Select(pair => pair.Item1).ToArray());
+        if(!IsHost) SendToHost(netEvent, isRel);
+        else QueueMessage(DatagramOutgoingSendType.SendTo, netEvent, isRel, _endPointIds.Select(pair => pair.Item1).ToArray());
     }
     public void SendToOthers(IPEndPoint allButEndPoint, NetworkEventModel netEvent, bool isRel)
-        => QueueMessage(DatagramOutgoingSendType.SendTo, netEvent, isRel, _endPointIds.Select(pair => pair.Item1).Where(p => p != allButEndPoint).ToArray());
+    {
+        var endPoints = _endPointIds.Select(pair => pair.Item1).Where(p => !p.Equals(allButEndPoint)).ToArray();
+        QueueMessage(DatagramOutgoingSendType.SendTo, netEvent, isRel, endPoints);
+    }
     public void SendToHost(NetworkEventModel netEvent, bool isRel)
     {
         if (IsHost) throw new NetworkManagerException($"Attempted to send message to host as the host: {netEvent}");

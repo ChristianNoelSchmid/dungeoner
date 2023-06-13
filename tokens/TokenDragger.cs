@@ -9,7 +9,7 @@ public partial class TokenDragger : Node2D
     private bool _mouseOver = false;
 
     // A singleton representing the current node being dragged
-    private static Node2D _targeted = null;
+    private static Node2D _targeted = null!;
 
     // A singleton representing
     private static Vector2 _offsetFromMouse;

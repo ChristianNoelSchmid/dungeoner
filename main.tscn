@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://cqe5xxi765sj0"]
+[gd_scene load_steps=35 format=3 uid="uid://cqe5xxi765sj0"]
 
 [ext_resource type="PackedScene" path="res://camera/main_camera.tscn" id="1_t46fc"]
 [ext_resource type="Script" path="res://Background.cs" id="2_g7ucn"]
@@ -17,6 +17,7 @@
 [ext_resource type="Script" path="res://token_manipulation/SelectionTool.cs" id="14_buur3"]
 [ext_resource type="Script" path="res://token_manipulation/DraggingTool.cs" id="15_bi371"]
 [ext_resource type="Script" path="res://token_manipulation/ResizingTool.cs" id="16_2cbo5"]
+[ext_resource type="PackedScene" path="res://ruler_tool.tscn" id="18_g35nt"]
 [ext_resource type="Script" path="res://network/NetworkManager.cs" id="18_x75ck"]
 [ext_resource type="Script" path="res://network_events/tokens/TokensTransformedEventHandler.cs" id="19_xbm57"]
 [ext_resource type="Script" path="res://network/ClientSynchronizer.cs" id="20_kpgqv"]
@@ -31,6 +32,8 @@
 [ext_resource type="Script" path="res://maps/PermissionsMap.cs" id="27_qis7w"]
 [ext_resource type="Script" path="res://network_events/users/UpdateUserPermissionsEventHandler.cs" id="28_j2lch"]
 [ext_resource type="Script" path="res://maps/UserMap.cs" id="28_ybkgi"]
+[ext_resource type="Script" path="res://network_events/ui/RulerOnEventHandler.cs" id="31_oc1k4"]
+[ext_resource type="Script" path="res://network_events/ui/RulerOffEventHandler.cs" id="32_j3ynh"]
 
 [node name="Main" type="Node"]
 metadata/_edit_horizontal_guides_ = [85.0]
@@ -38,7 +41,7 @@ metadata/_edit_horizontal_guides_ = [85.0]
 [node name="UiCanvas" type="CanvasLayer" parent="."]
 
 [node name="UI" parent="UiCanvas" instance=ExtResource("6_o0ab3")]
-size_flags_horizontal = 8
+offset_left = 1.0
 
 [node name="Background" type="ColorRect" parent="." node_paths=PackedStringArray("_mainCamera")]
 anchors_preset = 15
@@ -59,6 +62,7 @@ _mainCamera = NodePath("../Camera2D")
 scale = Vector2(0.860892, 1.03784)
 zoom = Vector2(3, 3)
 Speed = 500.0
+Accel = null
 ZoomSpeed = 10.0
 _uiCanvas = NodePath("../UiCanvas/UI")
 
@@ -127,6 +131,11 @@ _tokenImporter = NodePath("../Importers/TokenImporter")
 _selectionTool = NodePath("../SelectionTool")
 _permissionsMap = NodePath("../PermissionsMap")
 
+[node name="World" type="Node2D" parent="TokenMap"]
+y_sort_enabled = true
+
+[node name="Floor" type="Node2D" parent="TokenMap"]
+
 [node name="SelectionTool" type="Node2D" parent="." node_paths=PackedStringArray("_tokenMap", "_ui", "_draggingTool", "_resizingTool", "_netManager", "_userMap", "_permissionsMap")]
 script = ExtResource("14_buur3")
 _tokenMap = NodePath("../TokenMap")
@@ -149,6 +158,11 @@ _brackets = NodePath("Brackets")
 
 [node name="Brackets" parent="SelectionTool/ResizingTool" node_paths=PackedStringArray("_mainCamera") instance=ExtResource("5_6l0yx")]
 _mainCamera = NodePath("../../../Camera2D")
+
+[node name="RulerTool" parent="." node_paths=PackedStringArray("_netManager", "_userMap") instance=ExtResource("18_g35nt")]
+visible = false
+_netManager = NodePath("../NetworkManager")
+_userMap = NodePath("../UserMap")
 
 [node name="NetworkManager" type="Node" parent="." node_paths=PackedStringArray("_userMap", "_sync")]
 script = ExtResource("18_x75ck")
@@ -218,6 +232,16 @@ _userMap = NodePath("../../../UserMap")
 _permissionsMap = NodePath("../../../PermissionsMap")
 _ui = NodePath("../../../UiCanvas/UI")
 
+[node name="Ui" type="Node" parent="NetworkManager"]
+
+[node name="RulerOnNetworkEventHandler" type="Node" parent="NetworkManager/Ui" node_paths=PackedStringArray("_rulerTool")]
+script = ExtResource("31_oc1k4")
+_rulerTool = NodePath("../../../RulerTool")
+
+[node name="RulerOffNetworkEventHandler" type="Node" parent="NetworkManager/Ui" node_paths=PackedStringArray("_rulerTool")]
+script = ExtResource("32_j3ynh")
+_rulerTool = NodePath("../../../RulerTool")
+
 [node name="PermissionsMap" type="Node" parent="." node_paths=PackedStringArray("_userMap", "_tokenMap", "_netManager")]
 script = ExtResource("27_qis7w")
 _userMap = NodePath("../UserMap")
@@ -226,6 +250,3 @@ _netManager = NodePath("../NetworkManager")
 
 [node name="UserMap" type="Node" parent="."]
 script = ExtResource("28_ybkgi")
-
-[connection signal="MouseEnterBracket" from="SelectionTool/ResizingTool/Brackets" to="SelectionTool" method="OnResizeBoxEnter"]
-[connection signal="MouseExitBracket" from="SelectionTool/ResizingTool/Brackets" to="SelectionTool" method="OnResizeBoxExit"]

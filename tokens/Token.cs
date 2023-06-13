@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dungeoner;
+using Dungeoner.Maps;
 using Godot;
 
 public partial class Token : Node2D
@@ -13,7 +14,9 @@ public partial class Token : Node2D
     [Signal]
     public delegate void MouseExitEventHandler(Token token);
 
-    private TokenInstance _instance;
+    public TokenType TokenType { get; set; } = TokenType.World;
+
+    private TokenInstance _instance = default!;
     public TokenInstance Instance
     {
         get => _instance;

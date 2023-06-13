@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Dungeoner;
+namespace Dungeoner.Ui;
 
 public partial class UiTokenList : UiList
 {
@@ -18,6 +18,8 @@ public partial class UiTokenList : UiList
     private bool _mouseOver = false;
     private bool _draggingOffList = false;
     List<TokenInstance> _tokenInstances = new();
+
+    public TokenType PlacingTokenType { get; set; } = TokenType.World;
 
     public override void _Ready()
     {
@@ -69,6 +71,7 @@ public partial class UiTokenList : UiList
 
                 token.Teleport(mousePosition);
                 tokens.Add(token);
+                token.TokenType = PlacingTokenType;
 
                 _tokenMap[id] = token;
 

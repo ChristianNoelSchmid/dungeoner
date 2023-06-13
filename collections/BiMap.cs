@@ -31,6 +31,9 @@ public class BiMap<T, U> : IEnumerable<(T, U)>
         }
     }
 
+    public IEnumerable<T> Set1 => _uToT.Values;
+    public IEnumerable<U> Set2 => _tToU.Values;
+
     public bool ContainsKey(T key) => _tToU.ContainsKey(key);
     public bool ContainsKey(U key) => _uToT.ContainsKey(key);
 

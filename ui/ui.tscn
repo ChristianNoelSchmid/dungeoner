@@ -1,45 +1,170 @@
-[gd_scene load_steps=11 format=3 uid="uid://cx7shu1f3k0kd"]
+[gd_scene load_steps=15 format=3 uid="uid://cx7shu1f3k0kd"]
 
 [ext_resource type="Script" path="res://ui/UiMain.cs" id="1_ia42r"]
+[ext_resource type="Script" path="res://ui/UiTopMenu.cs" id="2_0e035"]
 [ext_resource type="Script" path="res://ui/UiMainTabBar.cs" id="2_koloa"]
 [ext_resource type="Script" path="res://ui/UiNetworkPanel.cs" id="2_mm26i"]
 [ext_resource type="Script" path="res://ui/UiSearchBar.cs" id="3_nsob6"]
 [ext_resource type="Script" path="res://ui/UiPermissionsPanel.cs" id="3_rfssi"]
 [ext_resource type="Script" path="res://ui/UiTokenList.cs" id="4_fgark"]
 [ext_resource type="Script" path="res://ui/UiMapTabBar.cs" id="5_fmo0o"]
+[ext_resource type="Script" path="res://ui/UiTokenMenuTokenChoice.cs" id="6_hett8"]
 [ext_resource type="Script" path="res://ui/UiTileMenuFillChoice.cs" id="6_w6ffm"]
 [ext_resource type="Script" path="res://ui/UiTileList.cs" id="7_idpnl"]
 [ext_resource type="Script" path="res://ui/UiWallMenuFillChoice.cs" id="8_xvoaw"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jvkhe"]
+bg_color = Color(0.14902, 0.14902, 0.14902, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ais3h"]
+bg_color = Color(0.164706, 0.164706, 0.164706, 1)
 
 [node name="UI" type="MarginContainer" node_paths=PackedStringArray("_mainPanel", "_mainTabBar", "_mapMenu")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 1.0
-offset_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 script = ExtResource("1_ia42r")
-_mainPanel = NodePath("HBoxContainer/VBoxContainer")
-_mainTabBar = NodePath("HBoxContainer/VBoxContainer/MainTabPanel/MainTabs")
+_mainPanel = NodePath("VBoxContainer/HBoxContainer/SidePanelVBox")
+_mainTabBar = NodePath("VBoxContainer/HBoxContainer/SidePanelVBox/MainTabPanel/MainTabs")
 _mainPanels = Array[Control]([null, null])
-_mapMenu = NodePath("HBoxContainer/VBoxContainer/MapMenu")
+_mapMenu = NodePath("VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
 
-[node name="NetworkVBox" type="VBoxContainer" parent="HBoxContainer"]
+[node name="MenuPanel" type="Panel" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+script = ExtResource("2_0e035")
+
+[node name="MenuBar" type="HBoxContainer" parent="VBoxContainer/MenuPanel"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+offset_top = 4.0
+offset_right = 1152.0
+offset_bottom = 44.0
+script = ExtResource("2_0e035")
+
+[node name="FileButton" type="Button" parent="VBoxContainer/MenuPanel/MenuBar"]
+layout_mode = 2
+text = "File
+"
+
+[node name="ItemList" type="ItemList" parent="VBoxContainer/MenuPanel/MenuBar/FileButton"]
+visible = false
+top_level = true
+layout_mode = 0
+offset_left = 1.0
+offset_top = 41.0
+offset_right = 74.0
+offset_bottom = 103.0
+theme_override_colors/guide_color = Color(0, 0, 0, 0)
+theme_override_constants/outline_size = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_jvkhe")
+theme_override_styles/focus = SubResource("StyleBoxFlat_ais3h")
+item_count = 2
+item_0/text = "Levels"
+item_1/text = "Exit"
+
+[node name="File" type="PopupMenu" parent="VBoxContainer/MenuPanel/MenuBar/FileButton"]
+title = "File"
+position = Vector2i(0, 32)
+size = Vector2i(128, 62)
+item_count = 2
+item_0/text = "Levels"
+item_0/id = 0
+item_1/text = "Exit"
+item_1/id = 1
+
+[node name="EditButton" type="Button" parent="VBoxContainer/MenuPanel/MenuBar"]
+layout_mode = 2
+text = "Edit"
+
+[node name="ItemList" type="ItemList" parent="VBoxContainer/MenuPanel/MenuBar/EditButton"]
+visible = false
+top_level = true
+layout_mode = 0
+offset_left = 39.0
+offset_top = 42.0
+offset_right = 112.0
+offset_bottom = 190.0
+theme_override_colors/guide_color = Color(0, 0, 0, 0)
+theme_override_constants/outline_size = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_jvkhe")
+theme_override_styles/focus = SubResource("StyleBoxFlat_ais3h")
+item_count = 5
+item_0/text = "Undo"
+item_1/text = "Redo"
+item_2/text = "Copy"
+item_3/text = "Paste"
+item_4/text = "Delete"
+
+[node name="Edit" type="PopupMenu" parent="VBoxContainer/MenuPanel/MenuBar/EditButton"]
+title = "Edit"
+position = Vector2i(39, 32)
+size = Vector2i(128, 147)
+item_count = 6
+item_0/text = "Undo"
+item_0/id = 0
+item_1/text = "Redo"
+item_1/id = 1
+item_2/text = ""
+item_2/id = 5
+item_2/separator = true
+item_3/text = "Copy"
+item_3/id = 2
+item_4/text = "Paste"
+item_4/id = 3
+item_5/text = "Delete"
+item_5/id = 4
+
+[node name="OptionsButton" type="Button" parent="VBoxContainer/MenuPanel/MenuBar"]
+layout_mode = 2
+text = "Options"
+
+[node name="ItemList" type="ItemList" parent="VBoxContainer/MenuPanel/MenuBar/OptionsButton"]
+visible = false
+top_level = true
+layout_mode = 0
+offset_left = 81.0
+offset_top = 42.0
+offset_right = 187.0
+offset_bottom = 78.0
+theme_override_colors/guide_color = Color(0, 0, 0, 0)
+theme_override_constants/outline_size = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_jvkhe")
+theme_override_styles/focus = SubResource("StyleBoxFlat_ais3h")
+item_count = 1
+item_0/text = "Permissions"
+
+[node name="Options" type="PopupMenu" parent="VBoxContainer/MenuPanel/MenuBar/OptionsButton"]
+title = "Options"
+position = Vector2i(82, 32)
+size = Vector2i(128, 35)
+item_count = 1
+item_0/text = "Permissions"
+item_0/id = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="NetworkVBox" type="VBoxContainer" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="NetworkPanel" type="Panel" parent="HBoxContainer/NetworkVBox" node_paths=PackedStringArray("_ui", "_permissionsPanel")]
+[node name="NetworkPanel" type="Panel" parent="VBoxContainer/HBoxContainer/NetworkVBox" node_paths=PackedStringArray("_ui", "_permissionsPanel")]
 custom_minimum_size = Vector2(132, 100)
 layout_mode = 2
 size_flags_vertical = 0
 script = ExtResource("2_mm26i")
-_ui = NodePath("../../..")
+_ui = NodePath("../../../..")
 _permissionsPanel = NodePath("../PermissionsPanel")
 
-[node name="Panel" type="VBoxContainer" parent="HBoxContainer/NetworkVBox/NetworkPanel"]
+[node name="Panel" type="VBoxContainer" parent="VBoxContainer/HBoxContainer/NetworkVBox/NetworkPanel"]
 custom_minimum_size = Vector2(128, 64)
 layout_mode = 2
 offset_left = 4.0
@@ -48,7 +173,7 @@ offset_bottom = 97.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 
-[node name="ServerTypeList" type="ItemList" parent="HBoxContainer/NetworkVBox/NetworkPanel/Panel"]
+[node name="ServerTypeList" type="ItemList" parent="VBoxContainer/HBoxContainer/NetworkVBox/NetworkPanel/Panel"]
 custom_minimum_size = Vector2(0, 62)
 layout_mode = 2
 size_flags_vertical = 3
@@ -56,17 +181,17 @@ item_count = 2
 item_0/text = "Host"
 item_1/text = "Client"
 
-[node name="OpenCheckBox" type="CheckButton" parent="HBoxContainer/NetworkVBox/NetworkPanel/Panel"]
+[node name="OpenCheckBox" type="CheckButton" parent="VBoxContainer/HBoxContainer/NetworkVBox/NetworkPanel/Panel"]
 layout_mode = 2
 text = "Open"
 
-[node name="PermissionsPanel" type="Panel" parent="HBoxContainer/NetworkVBox"]
+[node name="PermissionsPanel" type="Panel" parent="VBoxContainer/HBoxContainer/NetworkVBox"]
 custom_minimum_size = Vector2(132, 130)
 layout_mode = 2
 size_flags_vertical = 0
 script = ExtResource("3_rfssi")
 
-[node name="Panel" type="VBoxContainer" parent="HBoxContainer/NetworkVBox/PermissionsPanel"]
+[node name="Panel" type="VBoxContainer" parent="VBoxContainer/HBoxContainer/NetworkVBox/PermissionsPanel"]
 custom_minimum_size = Vector2(128, 64)
 layout_mode = 2
 offset_left = 4.0
@@ -75,36 +200,36 @@ offset_bottom = 131.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 
-[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer/NetworkVBox/PermissionsPanel/Panel"]
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/HBoxContainer/NetworkVBox/PermissionsPanel/Panel"]
 layout_mode = 2
 
-[node name="PermissionsLabel" type="Label" parent="HBoxContainer/NetworkVBox/PermissionsPanel/Panel/PanelContainer"]
+[node name="PermissionsLabel" type="Label" parent="VBoxContainer/HBoxContainer/NetworkVBox/PermissionsPanel/Panel/PanelContainer"]
 layout_mode = 2
 text = "Permissions"
 
-[node name="CreateCheckBox" type="CheckButton" parent="HBoxContainer/NetworkVBox/PermissionsPanel/Panel"]
+[node name="CreateCheckBox" type="CheckButton" parent="VBoxContainer/HBoxContainer/NetworkVBox/PermissionsPanel/Panel"]
 layout_mode = 2
 text = "Create"
 
-[node name="MoveCheckBox" type="CheckButton" parent="HBoxContainer/NetworkVBox/PermissionsPanel/Panel"]
+[node name="MoveCheckBox" type="CheckButton" parent="VBoxContainer/HBoxContainer/NetworkVBox/PermissionsPanel/Panel"]
 layout_mode = 2
 text = "Move"
 
-[node name="DeleteCheckBox" type="CheckButton" parent="HBoxContainer/NetworkVBox/PermissionsPanel/Panel"]
+[node name="DeleteCheckBox" type="CheckButton" parent="VBoxContainer/HBoxContainer/NetworkVBox/PermissionsPanel/Panel"]
 layout_mode = 2
 text = "Delete
 "
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+[node name="SidePanelVBox" type="VBoxContainer" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 10
 alignment = 2
 
-[node name="MainTabPanel" type="Panel" parent="HBoxContainer/VBoxContainer"]
+[node name="MainTabPanel" type="Panel" parent="VBoxContainer/HBoxContainer/SidePanelVBox"]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 
-[node name="MainTabs" type="TabBar" parent="HBoxContainer/VBoxContainer/MainTabPanel" node_paths=PackedStringArray("_tokenMenu", "_mapMenu")]
+[node name="MainTabs" type="TabBar" parent="VBoxContainer/HBoxContainer/SidePanelVBox/MainTabPanel" node_paths=PackedStringArray("_tokenMenu", "_mapMenu")]
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 offset_top = 4.0
@@ -117,18 +242,42 @@ script = ExtResource("2_koloa")
 _tokenMenu = NodePath("../../TokenMenu")
 _mapMenu = NodePath("../../MapMenu")
 
-[node name="TokenMenu" type="VBoxContainer" parent="HBoxContainer/VBoxContainer"]
+[node name="TokenMenu" type="VBoxContainer" parent="VBoxContainer/HBoxContainer/SidePanelVBox"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="LineEdit" type="LineEdit" parent="HBoxContainer/VBoxContainer/TokenMenu" node_paths=PackedStringArray("_list")]
+[node name="TokenType" type="Panel" parent="VBoxContainer/HBoxContainer/SidePanelVBox/TokenMenu"]
+custom_minimum_size = Vector2(0, 98)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer/SidePanelVBox/TokenMenu/TokenType"]
+layout_mode = 2
+offset_top = 4.0
+offset_right = 300.0
+offset_bottom = 30.0
+text = "Token Type"
+horizontal_alignment = 1
+
+[node name="Choice" type="ItemList" parent="VBoxContainer/HBoxContainer/SidePanelVBox/TokenMenu/TokenType" node_paths=PackedStringArray("_uiTokenList")]
+custom_minimum_size = Vector2(0, 62)
+layout_mode = 2
+offset_top = 36.0
+offset_right = 300.0
+offset_bottom = 98.0
+item_count = 2
+item_0/text = "World"
+item_1/text = "Floor"
+script = ExtResource("6_hett8")
+_uiTokenList = NodePath("../../TokenList")
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HBoxContainer/SidePanelVBox/TokenMenu" node_paths=PackedStringArray("_list")]
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 placeholder_text = "Search Tokens..."
 script = ExtResource("3_nsob6")
 _list = NodePath("../TokenList")
 
-[node name="TokenList" type="ItemList" parent="HBoxContainer/VBoxContainer/TokenMenu"]
+[node name="TokenList" type="ItemList" parent="VBoxContainer/HBoxContainer/SidePanelVBox/TokenMenu"]
 clip_contents = false
 custom_minimum_size = Vector2(300, 0)
 layout_direction = 3
@@ -142,16 +291,16 @@ icon_mode = 0
 fixed_icon_size = Vector2i(64, 64)
 script = ExtResource("4_fgark")
 
-[node name="MapMenu" type="VBoxContainer" parent="HBoxContainer/VBoxContainer"]
+[node name="MapMenu" type="VBoxContainer" parent="VBoxContainer/HBoxContainer/SidePanelVBox"]
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="MapTabPanel" type="Panel" parent="HBoxContainer/VBoxContainer/MapMenu"]
+[node name="MapTabPanel" type="Panel" parent="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu"]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 
-[node name="MapTabs" type="TabBar" parent="HBoxContainer/VBoxContainer/MapMenu/MapTabPanel" node_paths=PackedStringArray("_tileMenu", "_wallMenu")]
+[node name="MapTabs" type="TabBar" parent="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/MapTabPanel" node_paths=PackedStringArray("_tileMenu", "_wallMenu")]
 layout_mode = 2
 offset_top = 4.0
 offset_right = 300.0
@@ -164,16 +313,16 @@ script = ExtResource("5_fmo0o")
 _tileMenu = NodePath("../../TileMenu")
 _wallMenu = NodePath("../../WallMenu")
 
-[node name="TileMenu" type="VBoxContainer" parent="HBoxContainer/VBoxContainer/MapMenu"]
+[node name="TileMenu" type="VBoxContainer" parent="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu"]
 layout_direction = 2
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="FillType" type="Panel" parent="HBoxContainer/VBoxContainer/MapMenu/TileMenu"]
+[node name="FillType" type="Panel" parent="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/TileMenu"]
 custom_minimum_size = Vector2(0, 98)
 layout_mode = 2
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer/MapMenu/TileMenu/FillType"]
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/TileMenu/FillType"]
 layout_mode = 2
 offset_top = 4.0
 offset_right = 300.0
@@ -181,7 +330,7 @@ offset_bottom = 30.0
 text = "Fill Type"
 horizontal_alignment = 1
 
-[node name="Choice" type="ItemList" parent="HBoxContainer/VBoxContainer/MapMenu/TileMenu/FillType"]
+[node name="Choice" type="ItemList" parent="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/TileMenu/FillType"]
 custom_minimum_size = Vector2(0, 62)
 layout_mode = 2
 offset_top = 36.0
@@ -192,14 +341,14 @@ item_0/text = "Single"
 item_1/text = "Fill"
 script = ExtResource("6_w6ffm")
 
-[node name="LineEdit" type="LineEdit" parent="HBoxContainer/VBoxContainer/MapMenu/TileMenu" node_paths=PackedStringArray("_list")]
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/TileMenu" node_paths=PackedStringArray("_list")]
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 placeholder_text = "Search Tiles..."
 script = ExtResource("3_nsob6")
 _list = NodePath("../TileList")
 
-[node name="TileList" type="ItemList" parent="HBoxContainer/VBoxContainer/MapMenu/TileMenu"]
+[node name="TileList" type="ItemList" parent="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/TileMenu"]
 clip_contents = false
 custom_minimum_size = Vector2(300, 0)
 layout_direction = 3
@@ -212,17 +361,17 @@ icon_mode = 0
 fixed_icon_size = Vector2i(64, 64)
 script = ExtResource("7_idpnl")
 
-[node name="WallMenu" type="VBoxContainer" parent="HBoxContainer/VBoxContainer/MapMenu"]
+[node name="WallMenu" type="VBoxContainer" parent="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu"]
 visible = false
 layout_direction = 2
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="FillType" type="Panel" parent="HBoxContainer/VBoxContainer/MapMenu/WallMenu"]
+[node name="FillType" type="Panel" parent="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/WallMenu"]
 custom_minimum_size = Vector2(0, 98)
 layout_mode = 2
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer/MapMenu/WallMenu/FillType"]
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/WallMenu/FillType"]
 layout_mode = 2
 offset_top = 4.0
 offset_right = 300.0
@@ -230,7 +379,7 @@ offset_bottom = 30.0
 text = "Fill Type"
 horizontal_alignment = 1
 
-[node name="Choice" type="ItemList" parent="HBoxContainer/VBoxContainer/MapMenu/WallMenu/FillType"]
+[node name="Choice" type="ItemList" parent="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/WallMenu/FillType"]
 custom_minimum_size = Vector2(0, 62)
 layout_mode = 2
 offset_top = 36.0
@@ -241,14 +390,14 @@ item_0/text = "Side"
 item_1/text = "Room"
 script = ExtResource("8_xvoaw")
 
-[node name="LineEdit" type="LineEdit" parent="HBoxContainer/VBoxContainer/MapMenu/WallMenu" node_paths=PackedStringArray("_list")]
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/WallMenu" node_paths=PackedStringArray("_list")]
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 placeholder_text = "Search Walls..."
 script = ExtResource("3_nsob6")
 _list = NodePath("../WallList")
 
-[node name="WallList" type="ItemList" parent="HBoxContainer/VBoxContainer/MapMenu/WallMenu"]
+[node name="WallList" type="ItemList" parent="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/WallMenu"]
 clip_contents = false
 custom_minimum_size = Vector2(300, 0)
 layout_direction = 3
@@ -261,31 +410,36 @@ icon_mode = 0
 fixed_icon_size = Vector2i(64, 64)
 script = ExtResource("7_idpnl")
 
+[node name="CanvasLayer" type="CanvasLayer" parent="VBoxContainer"]
+
 [connection signal="focus_entered" from="." to="." method="OnFocusEntered"]
 [connection signal="focus_exited" from="." to="." method="OnFocusExited"]
-[connection signal="item_selected" from="HBoxContainer/NetworkVBox/NetworkPanel/Panel/ServerTypeList" to="HBoxContainer/NetworkVBox/NetworkPanel" method="OnServerTypeItemClicked"]
-[connection signal="toggled" from="HBoxContainer/NetworkVBox/NetworkPanel/Panel/OpenCheckBox" to="HBoxContainer/NetworkVBox/NetworkPanel" method="OnCheckBoxClicked"]
-[connection signal="toggled" from="HBoxContainer/NetworkVBox/PermissionsPanel/Panel/CreateCheckBox" to="HBoxContainer/NetworkVBox/PermissionsPanel" method="CreateChecked"]
-[connection signal="toggled" from="HBoxContainer/NetworkVBox/PermissionsPanel/Panel/MoveCheckBox" to="HBoxContainer/NetworkVBox/PermissionsPanel" method="MoveChecked"]
-[connection signal="toggled" from="HBoxContainer/NetworkVBox/PermissionsPanel/Panel/DeleteCheckBox" to="HBoxContainer/NetworkVBox/PermissionsPanel" method="DeleteChecked"]
-[connection signal="tab_changed" from="HBoxContainer/VBoxContainer/MainTabPanel/MainTabs" to="HBoxContainer/VBoxContainer/MainTabPanel/MainTabs" method="OnTabChange"]
-[connection signal="mouse_entered" from="HBoxContainer/VBoxContainer/TokenMenu/LineEdit" to="HBoxContainer/VBoxContainer/TokenMenu/LineEdit" method="OnMouseEnter"]
-[connection signal="mouse_exited" from="HBoxContainer/VBoxContainer/TokenMenu/LineEdit" to="HBoxContainer/VBoxContainer/TokenMenu/LineEdit" method="OnMouseExit"]
-[connection signal="text_changed" from="HBoxContainer/VBoxContainer/TokenMenu/LineEdit" to="HBoxContainer/VBoxContainer/TokenMenu/LineEdit" method="OnTextChange"]
-[connection signal="mouse_entered" from="HBoxContainer/VBoxContainer/TokenMenu/TokenList" to="HBoxContainer/VBoxContainer/TokenMenu/TokenList" method="OnMouseEnter"]
-[connection signal="mouse_exited" from="HBoxContainer/VBoxContainer/TokenMenu/TokenList" to="HBoxContainer/VBoxContainer/TokenMenu/TokenList" method="OnMouseExit"]
-[connection signal="tab_changed" from="HBoxContainer/VBoxContainer/MapMenu/MapTabPanel/MapTabs" to="HBoxContainer/VBoxContainer/MapMenu/MapTabPanel/MapTabs" method="OnTabChange"]
-[connection signal="item_selected" from="HBoxContainer/VBoxContainer/MapMenu/TileMenu/FillType/Choice" to="HBoxContainer/VBoxContainer/MapMenu/TileMenu/FillType/Choice" method="OnChoiceChange"]
-[connection signal="mouse_entered" from="HBoxContainer/VBoxContainer/MapMenu/TileMenu/FillType/Choice" to="HBoxContainer/VBoxContainer/MapMenu/TileMenu/FillType/Choice" method="OnMouseEnter"]
-[connection signal="mouse_exited" from="HBoxContainer/VBoxContainer/MapMenu/TileMenu/FillType/Choice" to="HBoxContainer/VBoxContainer/MapMenu/TileMenu/FillType/Choice" method="OnMouseExit"]
-[connection signal="mouse_entered" from="HBoxContainer/VBoxContainer/MapMenu/TileMenu/LineEdit" to="HBoxContainer/VBoxContainer/MapMenu/TileMenu/LineEdit" method="OnMouseEnter"]
-[connection signal="mouse_exited" from="HBoxContainer/VBoxContainer/MapMenu/TileMenu/LineEdit" to="HBoxContainer/VBoxContainer/MapMenu/TileMenu/LineEdit" method="OnMouseExit"]
-[connection signal="text_changed" from="HBoxContainer/VBoxContainer/MapMenu/TileMenu/LineEdit" to="HBoxContainer/VBoxContainer/MapMenu/TileMenu/LineEdit" method="OnTextChange"]
-[connection signal="item_selected" from="HBoxContainer/VBoxContainer/MapMenu/TileMenu/TileList" to="HBoxContainer/VBoxContainer/MapMenu/TileMenu/TileList" method="OnItemSelected"]
-[connection signal="item_selected" from="HBoxContainer/VBoxContainer/MapMenu/WallMenu/FillType/Choice" to="HBoxContainer/VBoxContainer/MapMenu/WallMenu/FillType/Choice" method="OnChoiceChange"]
-[connection signal="mouse_entered" from="HBoxContainer/VBoxContainer/MapMenu/WallMenu/FillType/Choice" to="HBoxContainer/VBoxContainer/MapMenu/WallMenu/FillType/Choice" method="OnMouseEnter"]
-[connection signal="mouse_exited" from="HBoxContainer/VBoxContainer/MapMenu/WallMenu/FillType/Choice" to="HBoxContainer/VBoxContainer/MapMenu/WallMenu/FillType/Choice" method="OnMouseExit"]
-[connection signal="mouse_entered" from="HBoxContainer/VBoxContainer/MapMenu/WallMenu/LineEdit" to="HBoxContainer/VBoxContainer/MapMenu/WallMenu/LineEdit" method="OnMouseEnter"]
-[connection signal="mouse_exited" from="HBoxContainer/VBoxContainer/MapMenu/WallMenu/LineEdit" to="HBoxContainer/VBoxContainer/MapMenu/WallMenu/LineEdit" method="OnMouseExit"]
-[connection signal="text_changed" from="HBoxContainer/VBoxContainer/MapMenu/WallMenu/LineEdit" to="HBoxContainer/VBoxContainer/MapMenu/WallMenu/LineEdit" method="OnTextChange"]
-[connection signal="item_selected" from="HBoxContainer/VBoxContainer/MapMenu/WallMenu/WallList" to="HBoxContainer/VBoxContainer/MapMenu/WallMenu/WallList" method="OnItemSelected"]
+[connection signal="item_selected" from="VBoxContainer/HBoxContainer/NetworkVBox/NetworkPanel/Panel/ServerTypeList" to="VBoxContainer/HBoxContainer/NetworkVBox/NetworkPanel" method="OnServerTypeItemClicked"]
+[connection signal="toggled" from="VBoxContainer/HBoxContainer/NetworkVBox/NetworkPanel/Panel/OpenCheckBox" to="VBoxContainer/HBoxContainer/NetworkVBox/NetworkPanel" method="OnCheckBoxClicked"]
+[connection signal="toggled" from="VBoxContainer/HBoxContainer/NetworkVBox/PermissionsPanel/Panel/CreateCheckBox" to="VBoxContainer/HBoxContainer/NetworkVBox/PermissionsPanel" method="CreateChecked"]
+[connection signal="toggled" from="VBoxContainer/HBoxContainer/NetworkVBox/PermissionsPanel/Panel/MoveCheckBox" to="VBoxContainer/HBoxContainer/NetworkVBox/PermissionsPanel" method="MoveChecked"]
+[connection signal="toggled" from="VBoxContainer/HBoxContainer/NetworkVBox/PermissionsPanel/Panel/DeleteCheckBox" to="VBoxContainer/HBoxContainer/NetworkVBox/PermissionsPanel" method="DeleteChecked"]
+[connection signal="tab_changed" from="VBoxContainer/HBoxContainer/SidePanelVBox/MainTabPanel/MainTabs" to="VBoxContainer/HBoxContainer/SidePanelVBox/MainTabPanel/MainTabs" method="OnTabChange"]
+[connection signal="item_selected" from="VBoxContainer/HBoxContainer/SidePanelVBox/TokenMenu/TokenType/Choice" to="VBoxContainer/HBoxContainer/SidePanelVBox/TokenMenu/TokenType/Choice" method="OnChoiceChange"]
+[connection signal="mouse_entered" from="VBoxContainer/HBoxContainer/SidePanelVBox/TokenMenu/TokenType/Choice" to="VBoxContainer/HBoxContainer/SidePanelVBox/TokenMenu/TokenType/Choice" method="OnMouseEnter"]
+[connection signal="mouse_exited" from="VBoxContainer/HBoxContainer/SidePanelVBox/TokenMenu/TokenType/Choice" to="VBoxContainer/HBoxContainer/SidePanelVBox/TokenMenu/TokenType/Choice" method="OnMouseExit"]
+[connection signal="mouse_entered" from="VBoxContainer/HBoxContainer/SidePanelVBox/TokenMenu/LineEdit" to="VBoxContainer/HBoxContainer/SidePanelVBox/TokenMenu/LineEdit" method="OnMouseEnter"]
+[connection signal="mouse_exited" from="VBoxContainer/HBoxContainer/SidePanelVBox/TokenMenu/LineEdit" to="VBoxContainer/HBoxContainer/SidePanelVBox/TokenMenu/LineEdit" method="OnMouseExit"]
+[connection signal="text_changed" from="VBoxContainer/HBoxContainer/SidePanelVBox/TokenMenu/LineEdit" to="VBoxContainer/HBoxContainer/SidePanelVBox/TokenMenu/LineEdit" method="OnTextChange"]
+[connection signal="mouse_entered" from="VBoxContainer/HBoxContainer/SidePanelVBox/TokenMenu/TokenList" to="VBoxContainer/HBoxContainer/SidePanelVBox/TokenMenu/TokenList" method="OnMouseEnter"]
+[connection signal="mouse_exited" from="VBoxContainer/HBoxContainer/SidePanelVBox/TokenMenu/TokenList" to="VBoxContainer/HBoxContainer/SidePanelVBox/TokenMenu/TokenList" method="OnMouseExit"]
+[connection signal="tab_changed" from="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/MapTabPanel/MapTabs" to="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/MapTabPanel/MapTabs" method="OnTabChange"]
+[connection signal="item_selected" from="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/TileMenu/FillType/Choice" to="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/TileMenu/FillType/Choice" method="OnChoiceChange"]
+[connection signal="mouse_entered" from="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/TileMenu/FillType/Choice" to="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/TileMenu/FillType/Choice" method="OnMouseEnter"]
+[connection signal="mouse_exited" from="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/TileMenu/FillType/Choice" to="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/TileMenu/FillType/Choice" method="OnMouseExit"]
+[connection signal="mouse_entered" from="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/TileMenu/LineEdit" to="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/TileMenu/LineEdit" method="OnMouseEnter"]
+[connection signal="mouse_exited" from="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/TileMenu/LineEdit" to="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/TileMenu/LineEdit" method="OnMouseExit"]
+[connection signal="text_changed" from="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/TileMenu/LineEdit" to="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/TileMenu/LineEdit" method="OnTextChange"]
+[connection signal="item_selected" from="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/TileMenu/TileList" to="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/TileMenu/TileList" method="OnItemSelected"]
+[connection signal="item_selected" from="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/WallMenu/FillType/Choice" to="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/WallMenu/FillType/Choice" method="OnChoiceChange"]
+[connection signal="mouse_entered" from="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/WallMenu/FillType/Choice" to="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/WallMenu/FillType/Choice" method="OnMouseEnter"]
+[connection signal="mouse_exited" from="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/WallMenu/FillType/Choice" to="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/WallMenu/FillType/Choice" method="OnMouseExit"]
+[connection signal="mouse_entered" from="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/WallMenu/LineEdit" to="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/WallMenu/LineEdit" method="OnMouseEnter"]
+[connection signal="mouse_exited" from="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/WallMenu/LineEdit" to="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/WallMenu/LineEdit" method="OnMouseExit"]
+[connection signal="text_changed" from="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/WallMenu/LineEdit" to="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/WallMenu/LineEdit" method="OnTextChange"]
+[connection signal="item_selected" from="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/WallMenu/WallList" to="VBoxContainer/HBoxContainer/SidePanelVBox/MapMenu/WallMenu/WallList" method="OnItemSelected"]

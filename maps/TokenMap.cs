@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dungeoner.Collections;
 using Dungeoner.Importers;
 using Dungeoner.TokenManipulation;
 using Godot;
@@ -18,15 +19,19 @@ public partial class TokenMap : Node2D
     [Export]
     private PermissionsMap _permissionsMap = default!;
 
+    private Node2D _floor = default!;
+    private Node2D _world = default!;
+
     // Collection of ids mapped to their Tokens
     // Enables quick access of tokens by Guid
     // (ie. client recv id to remove from host)
-    private Dictionary<Guid, Token> _idTokens = new();
+    private BiMap<Guid, Token> _idTokens = new();
 
-    // Collection of Tokens mapped to their ids
-    // Enables quick access of Guids by their Token (ie. host actions)
-    // (ie. host deleting Token - then sending id to client)
-    private Dictionary<Token, Guid> _tokenIds = new();
+    public override void _Ready() 
+    {
+        _world = (Node2D)FindChild("World");
+        _floor = (Node2D)FindChild("Floor");
+    }
 
     public Token this[Guid guid]
     {
@@ -36,14 +41,14 @@ public partial class TokenMap : Node2D
 
     public Guid this[Token token]
     {
-        get => _tokenIds[token];
+        get => _idTokens[token];
         set => AddToken(value, token);
     }
 
     public TokensCreatedModel? ToTokensCreatedModel(Guid userId)
     {
         if(!_idTokens.Any()) return null;
-        return new TokensCreatedModel(userId, _idTokens.Values.Select(token => new TokenModel(
+        return new TokensCreatedModel(userId, _idTokens.Set2.Select(token => new TokenModel(
             token.Instance.Part.Key,
             token.Id,
             (token.PivotPosition.X, token.PivotPosition.Y),
@@ -57,9 +62,10 @@ public partial class TokenMap : Node2D
             id = Guid.NewGuid();
 
         _idTokens.Add(id.Value, token);
-        _tokenIds.Add(token, id.Value);
 
-        AddChild(token);
+        if(token.TokenType == TokenType.World) _world.AddChild(token);
+        else _floor.AddChild(token);
+
         _selectionTool.RegisterToken(token);
         token.Id = id.Value;
 
@@ -71,7 +77,6 @@ public partial class TokenMap : Node2D
         _selectionTool.RemoveToken(_idTokens[id]);
         RemoveChild(_idTokens[id]);
 
-        _tokenIds.Remove(_idTokens[id]);
         _idTokens.Remove(id);
     }
 
@@ -80,8 +85,7 @@ public partial class TokenMap : Node2D
         _selectionTool.RemoveToken(token);
         RemoveChild(token);
 
-        _idTokens.Remove(_tokenIds[token]);
-        _tokenIds.Remove(token);
+        _idTokens.Remove(token);
     }
 
     public bool ContainsId(Guid id) => _idTokens.ContainsKey(id);

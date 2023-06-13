@@ -1,21 +1,14 @@
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Godot;
 using ProtoBuf;
-using Server.Networking;
 
 namespace Dungeoner.Server.Events.NetworkEventHandlers;
 
 public abstract partial class NetworkEventHandler : Node
 {
-    internal NetworkManager _manager;
+    internal NetworkManager _manager = default!;
     internal abstract void Invoke(byte[] data, IPEndPoint senderEndPoint);
 }
 
