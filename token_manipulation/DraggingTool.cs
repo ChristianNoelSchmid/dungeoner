@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using Dungeoner.Maps;
 using Godot;
 
 namespace Dungeoner.TokenManipulation;
@@ -23,6 +25,7 @@ public partial class DraggingTool : Node2D
             var mousePosition = GetGlobalMousePosition();
             if (_isDragging)
             {
+                foreach(var token in _offsets.Keys) token.GetParent()?.RemoveChild(token);
                 _dragTokenMapping.Clear();
                 _offsets.Clear();
                 _flipped = false;
@@ -32,13 +35,14 @@ public partial class DraggingTool : Node2D
                     var dragToken = _tokenScene.Instantiate<Token>();
                     dragToken.Instance = selectedToken.Instance;
                     dragToken.Modulate = new Color(2.0f, 2.0f, 2.0f, 0.75f);
+                    if(selectedToken.TokenType == TokenType.Floor) dragToken.ZIndex = selectedToken.ZIndex;
                     dragToken.Teleport(selectedToken.PivotPosition);
                     dragToken.Scale = selectedToken.Scale;
 
                     _dragTokenMapping[selectedToken] = dragToken;
                     _offsets.Add(dragToken, selectedToken.PivotPosition - mousePosition);
 
-                    _world.AddChild(dragToken);
+                    selectedToken.GetParent().AddChild(dragToken);
                     dragToken.Direction = selectedToken.Direction;
                 }
             }
@@ -63,13 +67,9 @@ public partial class DraggingTool : Node2D
                         Mathf.Round(dragToken.PivotPosition.Y / Constants.GRID_SIZE)
                     );
                     if (Mathf.RoundToInt(dragToken.Scale.X * dragToken.Instance.Part.GridSize!.Value.X) % 2 == 0)
-                    {
                         gridPosition.X -= 0.5f;
-                    }
                     if (Mathf.RoundToInt(dragToken.Scale.Y * dragToken.Instance.Part.GridSize!.Value.Y) % 2 == 0)
-                    {
                         gridPosition.Y -= 0.5f;
-                    }
 
                     dragToken.Teleport(new(
                         gridPosition.X * Constants.GRID_SIZE,
@@ -101,7 +101,7 @@ public partial class DraggingTool : Node2D
                 if (token.Direction == Direction.Left) token.Direction = Direction.Right;
                 else token.Direction = Direction.Left;
             }
-            _world.RemoveChild(dragToken);
+            dragToken.GetParent().RemoveChild(dragToken);
         }
     }
 }

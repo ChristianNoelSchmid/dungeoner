@@ -19,7 +19,7 @@ public partial class TokenMap : Node2D
     [Export]
     private PermissionsMap _permissionsMap = default!;
 
-    private Node2D _floor = default!;
+    private TokenFloorMap _floor = default!;
     private Node2D _world = default!;
 
     // Collection of ids mapped to their Tokens
@@ -30,7 +30,7 @@ public partial class TokenMap : Node2D
     public override void _Ready() 
     {
         _world = (Node2D)FindChild("World");
-        _floor = (Node2D)FindChild("Floor");
+        _floor = (TokenFloorMap)FindChild("Floor");
     }
 
     public Token this[Guid guid]
@@ -64,7 +64,7 @@ public partial class TokenMap : Node2D
         _idTokens.Add(id.Value, token);
 
         if(token.TokenType == TokenType.World) _world.AddChild(token);
-        else _floor.AddChild(token);
+        else _floor.AddToken(token);
 
         _selectionTool.RegisterToken(token);
         token.Id = id.Value;
@@ -75,20 +75,32 @@ public partial class TokenMap : Node2D
     public void RemoveToken(Guid id)
     {
         _selectionTool.RemoveToken(_idTokens[id]);
-        RemoveChild(_idTokens[id]);
-
+        if(_idTokens[id].TokenType == TokenType.World) _world.RemoveChild(_idTokens[id]);
+        else _floor.RemoveToken(_idTokens[id]);
         _idTokens.Remove(id);
     }
 
     public void RemoveToken(Token token)
     {
         _selectionTool.RemoveToken(token);
-        RemoveChild(token);
-
+        if(token.TokenType == TokenType.World) _world.RemoveChild(token);
+        else _floor.RemoveToken(token);
         _idTokens.Remove(token);
     }
 
     public bool ContainsId(Guid id) => _idTokens.ContainsKey(id);
 
     public void ScaleToken(Guid id, Vector2 scale) => _idTokens[id].GlobalScale = scale;
+
+    public override void _Process(double delta)
+    {
+        var token = _selectionTool.SelectedTokens.FirstOrDefault();
+        if(token != null && token.TokenType == TokenType.Floor)  
+        {
+            if(Input.IsActionJustPressed("bracket-left")) 
+                _floor.MoveBackward(token);
+            if(Input.IsActionJustPressed("bracket-right")) 
+                _floor.MoveForward(token);
+        }
+    }
 }

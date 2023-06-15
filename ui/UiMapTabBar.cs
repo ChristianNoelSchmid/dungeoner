@@ -6,10 +6,10 @@ using System;
 public partial class UiMapTabBar : Node
 {
     [Export]
-    private Control _tileMenu;
+    private Control _tileMenu = default!;
 
     [Export]
-    private Control _wallMenu;
+    private Control _wallMenu = default!;
 
     private TilePainter _tilePainter = default!;
     private WallPainter _wallPainter = default!;

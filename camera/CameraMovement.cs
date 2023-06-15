@@ -11,7 +11,7 @@ public partial class CameraMovement : Camera2D
     [Export]
     public float ZoomSpeed { get; set; } = 1;
     [Export]
-    private UiMain _uiCanvas = default!;
+    private UiMain _ui = default!;
 
     private Vector2 _targetPosition;
 
@@ -24,7 +24,7 @@ public partial class CameraMovement : Camera2D
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta)
     {
-        if (_uiCanvas.IsFocused) return;
+        if (_ui.IsFocused) return;
 
         float deltaf = (float)delta;
         Vector2 axes = new(Input.GetAxis("left", "right"), Input.GetAxis("up", "down"));

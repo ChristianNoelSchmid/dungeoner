@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://iprrgugl7diq"]
+
+[ext_resource type="Script" path="res://RulerTool.cs" id="1_owrhs"]
+
+[node name="RulerTool" type="Node2D" node_paths=PackedStringArray("_netManager", "_userMap")]
+script = ExtResource("1_owrhs")
+_netManager = NodePath("../NetworkManager")
+_userMap = NodePath("../UserMap")

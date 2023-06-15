@@ -28,7 +28,13 @@ public partial class SelectionTool : Node2D
     // (ie. they were just dragged from the TokenList UI)
     public bool JustPlacing { get; set; } = false;
 
-    private Heap<Token> _tokenHeap = new((a, b) => a.Position.Y.CompareTo(b.Position.Y));
+    private Heap<Token> _tokenHeap = new(
+        (a, b) => {
+            if(a.TokenType == TokenType.World && b.TokenType == TokenType.Floor) return 1;
+            else if(b.TokenType == TokenType.World && a.TokenType == TokenType.Floor) return -1;
+            return a.Position.Y.CompareTo(b.Position.Y);
+        }
+    );
     private Vector2? _selectBoxStart;
     private ResizeDirection? _resizeDirection;
 
@@ -42,10 +48,7 @@ public partial class SelectionTool : Node2D
             if (Input.IsActionJustPressed("select"))
             {
                 // If the UI is focused when clicked, deselect all selected tokens
-                if (_ui.IsFocused)
-                {
-                    _selectedTokens.Clear();
-                }
+                if (_ui.IsFocused) _selectedTokens.Clear();
 
                 // If there's a resize bracket the mouse is currently hovering over,
                 // begin resizing
@@ -159,6 +162,7 @@ public partial class SelectionTool : Node2D
             }
             if (Input.IsActionJustPressed("delete"))
             {
+                _draggingTool.IsDragging = false;
                 foreach (var token in _selectedTokens)
                 {
                     if (
